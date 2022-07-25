@@ -146,12 +146,22 @@ function Import() {
         console.log("erGroup created");
       }
       //TODO: check if there is already a moduleErGoup
-      const res = await api.post("moduleErGroup", {
+      const moduleErGoup = await api.post("moduleErGroup/exists", {
         er_group_id: erGroupId,
         module_id: moduleId,
-      });
-      console.log("moduleErGroup created successfully");
-      return res.data;
+      })
+      let res
+      console.log("moduleErGoup.data moduleErGoup.data   " + moduleErGoup.data)
+      if (!moduleErGoup.data) {
+        res = await api.post("moduleErGroup", {
+          er_group_id: erGroupId,
+          module_id: moduleId,
+        });
+
+        console.log("moduleErGroup created successfully");
+        return res.data;
+      }
+  
     } catch (err) {
       console.log(JSON.stringify(err.response.data));
     }
