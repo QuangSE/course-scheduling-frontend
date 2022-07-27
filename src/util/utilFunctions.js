@@ -64,4 +64,25 @@ function getIndexOfPropertyMatch(arr, property, value) {
   }
 }
 
-export default { sortByProperty, getIndexOfPropertyMatch, prepData };
+function getMajorHeading(examRegGroup) {
+  const degree = examRegGroup.major.degree;
+  const majorName = examRegGroup.major.name;
+  const examRegulations = examRegGroup.exam_regulations_group
+    ? examRegGroup.exam_regulations_group
+    : "PO" + examRegGroup.year;
+  return `${degree} ${majorName} ${examRegulations}`;
+}
+
+function isVisible(module) {
+  return module.visibility == 1 || module.visibility == 0;
+}
+
+function getRegisteredDocentName(course) {
+  const index = course.docentCourses.length;
+  if (index && course.docentCourses[index - 1].registered.data[0] == 0) {
+    return course.docentCourses[index - 1].docent.last_name;
+  }
+  return "\u00A0";
+}
+
+export default { sortByProperty, getIndexOfPropertyMatch, prepData, getMajorHeading, isVisible, getRegisteredDocentName };

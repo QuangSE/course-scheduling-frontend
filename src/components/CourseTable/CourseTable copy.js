@@ -1,10 +1,11 @@
 import React, { Fragment, useState } from "react";
 import util from "../../util/utilFunctions";
+import api from "../../apis/courseScheduling/courseSchedulingApi";
+
 import "./courseTable.css";
 
 function HybridView({ data }) {
-  console.log("HybridView ");
-  console.log(data);
+
   return (
     <div className="hybdrid-view-container">
       {data.map((element) => (
@@ -14,21 +15,48 @@ function HybridView({ data }) {
   );
 }
 
-const handleAddFormSubmit = (event) => {
-  event.preventDefault();
-};
-const handleEditFormSubmit = (event) => {
-  event.preventDefault();
-};
-const handleEditFormChange = (event) => {
-  event.preventDefault();
-};
-const handleAddFormChange = (event) => {
-  event.preventDefault();
-};
-
 function HybridTable({ examRegGroup }) {
   const [tableVisibility, setTableVisibility] = useState(false);
+  const [contacts, setContacts] = useState(data);
+  const [addFormData, setAddFormData] = useState({
+    semester: "",
+    er_group: "",
+    module: "",
+    course: "",
+  });
+
+  const [editFormData, setEditFormData] = useState({
+    semester: "",
+    er_group: "",
+    module: "",
+    course: "",
+    docent: "",
+  });
+
+  const [editExamRegulationsId, setEditExamRegultaionsId] = useState(null);
+
+  const handleAddFormSubmit = (event) => {
+    event.preventDefault();
+
+    const course = {
+      semester: addFormData.semester,
+      er_group: addFormData.er_group,
+      module: addFormData.module,
+      course: addFormData.course,
+    };
+
+    //TODO: api req
+  };
+
+  const handleEditFormSubmit = (event) => {
+    event.preventDefault();
+  };
+  const handleEditFormChange = (event) => {
+    event.preventDefault();
+  };
+  const handleAddFormChange = (event) => {
+    event.preventDefault();
+  };
   return (
     <div>
       <div
@@ -64,43 +92,57 @@ function HybridTable({ examRegGroup }) {
                         <td>{examRegGroup.name}</td>
                         <td>{module.name}</td>
                         <td>
-                            {module.courses.map((course, i) => (
-                              <tr
-                                style={{
-                                  display: "flex",
-                                  border: "none",
-                                  width: "100%",
-                                  borderTop: i > 0 ? "1px solid black" : "none",
-                                }}
-                                key={course.course_id}
-                              >
+                          {module.courses.map((course, i) => (
+                            <tr
+                              style={{
+                                display: "flex",
+                                border: "none",
+                                width: "100%",
+                                borderTop: i > 0 ? "1px solid black" : "none",
+                              }}
+                              key={course.course_id}
+                            >
                               {course.name}
-                              </tr>
-                            ))}
+                            </tr>
+                          ))}
                         </td>
                         <td>
-                            {module.courses.map((course, i) => (
-                              <tr
-                                style={{
-                                  display: "flex",
-                                  border: "none",
-                                  width: "100%",
-                                  borderTop: i > 0 ? "1px solid black" : "none",
-                                }}
-                                key={course.course_id}
-                              >
-                                {util.getRegisteredDocentName(course)}
-                              </tr>
-                            ))}
-                     
+                          {module.courses.map((course, i) => (
+                            <tr
+                              style={{
+                                display: "flex",
+                                border: "none",
+                                width: "100%",
+                                borderTop: i > 0 ? "1px solid black" : "none",
+                              }}
+                              key={course.course_id}
+                            >
+                              {util.getRegisteredDocentName(course)}
+                            </tr>
+                          ))}
                         </td>
                       </tr>
                     );
                 })}
             </tbody>
           </table>
-          <h3>Module erstellen</h3>
+          <h3>Lehrveranstaltungen hinzufügen</h3>
           <form onSubmit={handleAddFormSubmit}>
+            <input
+              type="hidden"
+              name="exam_regulations_id"
+              value={examRegGroup.exam_regulations_id}
+            />
+            <input
+              type="hidden"
+              name="exam_regulations_group"
+              value={examRegGroup.exam_regulations_group}
+            />
+            <input
+              type="hidden"
+              name="major_id"
+              value={examRegGroup.major.major_id}
+            />
             <input
               type="text"
               name="semester"
@@ -111,7 +153,7 @@ function HybridTable({ examRegGroup }) {
             />
             <input
               type="text"
-              name="group"
+              name="er_group"
               required="required"
               placeholder="Gruppe"
               onChange={handleAddFormChange}

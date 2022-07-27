@@ -2,9 +2,11 @@ import React, { useMemo, useState, useEffect } from "react";
 import Header from "../../components/Header/Header";
 import Tree from "../../components/Tree/Tree";
 import api from "../../apis/courseScheduling/courseSchedulingApi";
-import  ut  from "../../util/utilFunctions";
+import  util  from "../../util/utilFunctions";
 import "./home.css";
 import HybridView from "../../components/CourseTable/CourseTable.js";
+
+
 
 const data = [
   {
@@ -136,7 +138,7 @@ export default function Home() {
   useEffect(() => {
     api.getAllExamRegulationsOverview().then((res) => {
       console.log(res.data);
-      setTableData(ut.prepData(res.data));
+      setTableData(util.prepData(res.data));
     });
   }, []);
 
