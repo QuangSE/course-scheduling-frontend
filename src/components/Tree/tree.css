@@ -31,7 +31,3 @@ ul {
 .tree-toggler.active {
     transform: rotate(90deg);
 }
-
-.child {
-   
-}
