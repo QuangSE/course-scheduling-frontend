@@ -25,4 +25,8 @@ async function getCourses(examRegulationsId) {
     return api.get(`exam-regulations/${examRegulationsId}/courses`)
 }
 
-export default { createSession, getSession, deleteSession, getCourses };
+async function getAllExamRegulationsOverview() {
+  return api.get("exam-regulations/all/overview/courses")
+}
+
+export default { createSession, getSession, deleteSession, getCourses, getAllExamRegulationsOverview };

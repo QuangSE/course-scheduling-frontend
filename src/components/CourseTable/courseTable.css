@@ -1,0 +1,49 @@
+table,
+th,
+td, tr {
+  border: 1px solid black;
+  border-collapse: collapse;
+  hyphens: auto;
+  empty-cells: show;
+}
+
+.test {
+  display: block;
+  border: "none";
+}
+
+.tree-toggler {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 12px solid black;
+}
+
+.tree-toggler.active {
+  transform: rotate(90deg);
+}
+
+.major-header {
+  hyphens: auto;
+  padding-left: 10px;
+}
+
+.hybdrid-view-container {
+  border: 1px;
+  margin: auto;
+}
+
+thead {
+  background-color: #008F7A;
+  color: #ffffff;
+}
+
+.master-table {
+  padding-bottom: 30px;
+}
+
+p {
+   vertical-align: center;
+}
