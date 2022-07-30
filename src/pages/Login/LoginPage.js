@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { useNavigate } from "react-router-dom";
 import "./login.css";
-import api from "../../apis/courseScheduling/courseSchedulingApi";
+import api from "../../apis/courseScheduling/CourseSchedulingApi";
 
 function LoginPage() {
   const [error, setError] = useState("");

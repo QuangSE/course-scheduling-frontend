@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../apis/courseScheduling/courseSchedulingApi";
+import api from "../../apis/courseScheduling/CourseSchedulingApi";
 
 function Logout() {
   const navigate = useNavigate();

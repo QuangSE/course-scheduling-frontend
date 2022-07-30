@@ -1,21 +1,22 @@
-import { useNavigate, Navigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import api from "../apis/courseScheduling/courseSchedulingApi";
+import api from "../apis/courseScheduling/CourseSchedulingApi";
 
 function ProtectedRoutes() {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
-  //FIXME: multiple rerender calls
   useEffect(() => {
     api.getSession().then((res) => {
       console.log("session: " + res.data.session);
+      setIsLoading(false);
       if (!res.data.session) {
         navigate("/login");
       }
     });
-  }, []);
+  }, [isLoading]);
 
-  return <Outlet />;
+  return isLoading ? null : <Outlet />;
 }
 
 export default ProtectedRoutes;
