@@ -6,20 +6,20 @@ import Import from './pages/Experimental/Import';
 import ProtectedRoutes from './util/ProtectedRoutes';
 
 function App() {
-    return (
-        <div className="App">
-            <BrowserRouter>
-                <Routes>
-                    <Route element={<ProtectedRoutes />}>
-                        <Route path="/" element={<Home />} />
-                    </Route>
-                    {/*  <Route path="/" element={<Home />} /> */}
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/experimental" element={<Import />} />
-                </Routes>
-            </BrowserRouter>
-        </div>
-    );
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route element={<ProtectedRoutes />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+          {/*  <Route path="/" element={<Home />} /> */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/experimental" element={<Import />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 export default App;

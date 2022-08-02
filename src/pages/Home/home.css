@@ -1,16 +1,16 @@
 .row {
-    display: flex;
+  display: flex;
 }
 
 .title {
-    text-align: center;
+  text-align: center;
 }
 
 .p1 {
-    line-height: 20px;
+  line-height: 20px;
 }
 
 .content-center {
-    display: flex;
-    margin: auto;
+  display: flex;
+  margin: auto;
 }
