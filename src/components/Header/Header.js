@@ -1,18 +1,18 @@
-import React from 'react'
-import Logout from "../Logout/Logout"
+import React from 'react';
+import Logout from '../Logout/Logout';
 import './header.css';
 
 function Header() {
-  return (
-    <nav>
-        <div className="div-header">
-            <div>Logo</div>
-            <div className="button">
-                <Logout />
+    return (
+        <nav>
+            <div className="div-header">
+                <div>Logo</div>
+                <div className="button">
+                    <Logout />
+                </div>
             </div>
-        </div>
-    </nav>
-  )
+        </nav>
+    );
 }
 
-export default Header
+export default Header;

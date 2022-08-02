@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-
+import React, { useState } from 'react';
 
 function LoginForm({ Login, Error }) {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
 
     const submitHandler = (e) => {
         e.preventDefault(); //prevent a browser reload/refresh

@@ -2,84 +2,88 @@ table,
 th,
 td,
 tr {
-  border: 1px solid black;
-  border-collapse: collapse;
-  hyphens: auto;
-  empty-cells: show;
+    border: 1px solid black;
+    border-collapse: collapse;
+    hyphens: auto;
+    empty-cells: show;
 }
 
-td:first-child, td:nth-of-type(2) {
-  text-align: center;
+td:first-child,
+td:nth-of-type(2) {
+    text-align: center;
 }
 
 .test {
-  display: block;
-  border: "none";
+    display: block;
+    border: 'none';
 }
 
 .tree-toggler {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  border-left: 12px solid gray;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 12px solid gray;
 }
 
 .tree-toggler.active {
-  border-left: 12px solid black;
-  transform: rotate(90deg);
+    transition-property: transform;
+    transition-duration: 0.3s;
+    border-left: 12px solid black;
+    transform: rotate(90deg);
 }
 
 .major-header {
-  display: inline;
-  hyphens: auto;
-  padding-left: 15px;
-  color: gray;
+    display: inline;
+    hyphens: auto;
+    padding-left: 15px;
+    color: gray;
 }
 
 .major-header.active {
-  color: black;
+    transition-property: color;
+    transition-duration: 0.3s;
+    color: black;
 }
 
 .hybdrid-view-container {
-  margin: auto;
+    margin: auto;
 }
 
 thead {
-  background-color: #008f7a;
-  color: #ffffff;
+    background-color: #008f7a;
+    color: #ffffff;
 }
 
 .master-table {
-  padding-bottom: 30px;
+    padding-bottom: 30px;
 }
 
 p {
-  vertical-align: center;
+    vertical-align: center;
 }
 
 .hybdrid-table-container {
-  /* 
-  outline: 1px solid black; */
-  border-bottom: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .form-course {
-  padding-bottom: 10px;
-  padding-top: 100px;
+    padding-bottom: 10px;
+    padding-top: 100px;
 }
 .child {
-  padding-bottom: 30px;
+    padding-bottom: 30px;
 }
 
-
 .td-button {
-  border: none;
-  background-color: #710000;
-} 
+    border: none;
+    background-color: #710000;
+}
 
-td:last-child{
-  border :none;
-  background-color: #ffffff;
+td:last-child {
+    border: none;
+    background-color: #ffffff;
 }
