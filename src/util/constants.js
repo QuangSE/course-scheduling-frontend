@@ -2,6 +2,7 @@ module.exports = {
   API_BASE_URL: 'http://localhost:3001/api/',
   AUTHENTICATION: 'auth',
   EXAM_REGULATIONS: 'exam-regulations',
+  MAJOR: 'major',
   MODULE: 'module',
   DOCENT: 'docent',
   ER_GROUP: 'er-group',

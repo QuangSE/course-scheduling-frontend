@@ -41,6 +41,7 @@ function LoginPage() {
   return (
     <div className="login">
       <LoginForm Login={onLogin} error={error} />
+      <h2>TODO: Register</h2>
     </div>
   );
 }

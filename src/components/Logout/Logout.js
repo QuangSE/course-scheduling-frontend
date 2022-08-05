@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
+import './logout.css';
 
 function Logout() {
   const navigate = useNavigate();

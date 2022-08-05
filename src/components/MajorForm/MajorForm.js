@@ -1,6 +1,8 @@
 import React, { Fragment, useState } from 'react';
+import api from '../../apis/courseScheduling/CourseSchedulingApi';
+import './majorForm.css';
 
-function MajorForm({ permissionId, setFetchData, fetchData }) {
+function MajorForm({ permissionId, rerenderPage }) {
   const emptyFormData = {
     majorName: '',
     degree: '',
@@ -8,10 +10,6 @@ function MajorForm({ permissionId, setFetchData, fetchData }) {
     examRegulationsGroup: '',
   };
   const [majorFormData, setMajorFormData] = useState(emptyFormData);
-
-  function rerenderPage() {
-    setFetchData(!fetchData);
-  }
 
   function handleFormChange(event) {
     event.preventDefault();
@@ -25,36 +23,34 @@ function MajorForm({ permissionId, setFetchData, fetchData }) {
   async function handleFormSubmit(event) {
     event.preventDefault();
 
-    const finalFormData = {
-      majorName: majorFormData.majorName.trim(),
-      degree: majorFormData.degree.trim(),
-      examRegulationsYear: parseInt(majorFormData.examRegulationsYear),
-      examRegulationsGroup: majorFormData.examRegulationsGroup.trim(),
-    };
-    //TODO:
-    const res = await createMajorIfNotExist(finalFormData);
+    const majorName = majorFormData.majorName.trim();
+    const degree = majorFormData.degree.trim();
+    const examRegulationsYear = parseInt(majorFormData.examRegulationsYear);
+    const examRegulationsGroup = majorFormData.examRegulationsGroup.trim();
+
+    const res = await createMajorIfNotExist(majorName, degree);
     const majorId = res.data.major_id;
-    await createExamRegulations(majorId);
+    await api.createExamRegulations(examRegulationsYear, examRegulationsGroup, majorId);
     setMajorFormData(emptyFormData);
     rerenderPage();
   }
 
-  async function createMajorIfNotExist(majorData) {
-    //TODO: api call to create major if not exist
-  }
-
-  async function createExamRegulations(majorId) {
-    //TODO: api call to create exam regulations
+  async function createMajorIfNotExist(name, degree) {
+    let res = await api.getMajorByNameDegree(name, degree);
+    if (!res.data) {
+      res = await api.createMajor(name, degree);
+    }
+    return res;
   }
 
   return (
-    <Fragment>
+    <div className="major-form">
       {permissionId == 1 ? (
         <Fragment>
           <h3>Studiengang hinzufügen</h3>
           <form onSubmit={handleFormSubmit}>
             <input
-              style={{}}
+              style={{ width: '200px' }}
               type="text"
               name="majorName"
               required="required"
@@ -63,7 +59,7 @@ function MajorForm({ permissionId, setFetchData, fetchData }) {
               value={majorFormData.majorName}
             />
             <input
-              style={{}}
+              style={{ width: '100px' }}
               type="text"
               name="degree"
               required="required"
@@ -86,16 +82,15 @@ function MajorForm({ permissionId, setFetchData, fetchData }) {
               style={{}}
               type="text"
               name="examRegulationsGroup"
-              placeholder="Prüfungsordnungsgruppe z.B 'PO2019&PO2022'"
+              placeholder="PO-Gruppe z.B 'PO2019&PO2022'"
               onChange={handleFormChange}
               value={majorFormData.examRegulationsGroup}
             />
             <button type="submit">Hinzufügen</button>
-            <pre>{JSON.stringify(majorFormData, null, 2)}</pre>
           </form>
         </Fragment>
       ) : null}
-    </Fragment>
+    </div>
   );
 }
 

@@ -12,3 +12,11 @@ nav {
   justify-content: space-between;
   align-items: center;
 }
+
+li {
+  display: inline;
+  list-style: none;
+  font-size: 18px;
+  padding: 10px;
+  line-height: 80px;
+}

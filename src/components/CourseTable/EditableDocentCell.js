@@ -1,12 +1,12 @@
 import React, { Fragment } from 'react';
 
-function EditableDocentCell({ value, handleEditInputChange }) {
+function EditableDocentCell({ value, name, handleEditInputChange }) {
   return (
     <Fragment>
       <input
         type="text"
         required="required"
-        name="docentLastName"
+        name={name}
         value={value}
         onChange={handleEditInputChange}
         autoFocus={true}

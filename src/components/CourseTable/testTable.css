@@ -1,19 +1,21 @@
 /* table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
 }
 
-td:not(:last-child), th:not(:last-child) { 
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+td:not(:last-child),
+th:not(:last-child) {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
 
-tr:nth-child(even) td:not(:last-child) { 
-    background-color: #dddddd;
+tr:nth-child(even) td:not(:last-child) {
+  background-color: #dddddd;
 }
 
 tbody > tr:last-child > td {
   border: 0;
-} */
+}
+ */

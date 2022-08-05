@@ -3,6 +3,7 @@ import {
   API_BASE_URL,
   AUTHENTICATION,
   EXAM_REGULATIONS,
+  MAJOR,
   MODULE,
   DOCENT,
   ER_GROUP,
@@ -37,12 +38,48 @@ class CourseSchedulingApi {
     return this.api.post(`${AUTHENTICATION}/delete-session`, { logout: true });
   }
 
+  createMajor(name, degree) {
+    return this.api.post(MAJOR, { name, degree });
+  }
+
+  deleteMajor(majorId) {
+    return this.api.delete(`${MAJOR}/${majorId}`);
+  }
+
+  getMajorByNameDegree(name, degree) {
+    return this.api.post(`${MAJOR}/by-name-degree`, { name, degree });
+  }
+
+  getExamRegulations(majorId) {
+    return this.api.get(`${MAJOR}/${majorId}/exam-regulations`);
+  }
+
+  createExamRegulations(year, examRegulationsGroup, majorId) {
+    return this.api.post(EXAM_REGULATIONS, {
+      year: year,
+      exam_regulations_group: examRegulationsGroup,
+      major_id: majorId,
+    });
+  }
+
   getCourses(examRegulationsId) {
     return this.api.get(`${EXAM_REGULATIONS}/${examRegulationsId}/courses`);
   }
 
+  getErGroups(examRegulationsId) {
+    return this.api.get(`${EXAM_REGULATIONS}/${examRegulationsId}/er-groups`);
+  }
+
   getAllExamRegulationsOverview() {
     return this.api.get(`${EXAM_REGULATIONS}/all/overview/courses`);
+  }
+
+  getExistingModuleId(examRegulationsId, moduleId) {
+    return this.api.get(`${EXAM_REGULATIONS}/${examRegulationsId}/module/${moduleId}`);
+  }
+
+  deleteExamRegulations(examRegulationsId) {
+    return this.api.delete(`${EXAM_REGULATIONS}/${examRegulationsId}`);
   }
 
   getModule(moduleId) {
@@ -112,11 +149,12 @@ class CourseSchedulingApi {
     });
   }
 
-  createDocentCourse(docentId, courseId, registered = 1) {
+  createDocentCourse(docentId, courseId, registered = 1, updatedBy) {
     return this.api.post(DOCENT_COURSE, {
       docent_id: docentId,
       course_id: courseId,
       registered: registered,
+      updated_by: updatedBy,
     });
   }
 
@@ -151,6 +189,10 @@ class CourseSchedulingApi {
     });
   }
 
+  getAllDocentCourseEntries() {
+    return this.api.get(DOCENT_COURSE);
+  }
+
   getDocentCourseByDocentIdCourseId(docentId, courseId) {
     return this.api.post(`${DOCENT_COURSE}/by-ids`, {
       docent_id: docentId,
@@ -182,6 +224,29 @@ class CourseSchedulingApi {
 
   updateCourse(courseId, courseData) {
     return this.api.patch(`${COURSE}/${courseId}`, courseData);
+  }
+
+  createCompulsoryModule(moduleId, majorId) {
+    return this.api.post(COMPULSORY_MODULE, {
+      module_id: moduleId,
+      major_id: majorId,
+    });
+  }
+
+  getCompulsoryModuleByIds(moduleId, majorId) {
+    return this.api.post(`${COMPULSORY_MODULE}/by-ids`, { moduleId, majorId });
+  }
+
+  getCompulsoryModuleOverview() {
+    return this.api.get(`${COMPULSORY_MODULE}/all/overview`);
+  }
+
+  getMyTotalLsws() {
+    return this.api.get(`${USER}/my-account/total-lsws`);
+  }
+
+  getMyVisibleCourses() {
+    return this.api.get(`${USER}/my-account/visible-courses`);
   }
 }
 

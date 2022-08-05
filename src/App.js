@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
 import Login from './pages/Login/LoginPage';
+import DocentsOverview from './pages/DocentsOverview/DocentsOverview';
 import Import from './pages/Experimental/Import';
 import ProtectedRoutes from './util/ProtectedRoutes';
 
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route element={<ProtectedRoutes />}>
             <Route path="/" element={<Home />} />
+            <Route path="/docents-overview" element={<DocentsOverview />} />
           </Route>
           {/*  <Route path="/" element={<Home />} /> */}
           <Route path="/login" element={<Login />} />

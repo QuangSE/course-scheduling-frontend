@@ -8,7 +8,7 @@ function NestledRow({ children, index }) {
         style={{
           display: 'flex',
           border: 'none',
-          width: '100%',
+          /* width: '100%', */
           minHeight: '20px',
           borderTop: index > 0 ? '1px solid black' : 'none',
         }}

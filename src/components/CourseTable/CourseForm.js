@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from 'react';
 import addCourseHandler from './addCourseHandler';
+import './courseForm.css';
 
-function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }) {
+function CourseForm({ examRegulationsId, permissionId, rerenderPage }) {
   const formRef = React.useRef(null);
   const emptyAddFormData = {
     semester: '',
@@ -9,6 +10,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
     moduleName: '',
     sws: '',
     courseName: '',
+    lsws: '',
     visibility: '',
   };
   const uncheckedVisibility = { ws: false, ss: false, ws_ss: false };
@@ -28,6 +30,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
       moduleName: addFormData.moduleName.trim(),
       sws: parseInt(addFormData.sws, 10),
       courseName: addFormData.courseName.trim(),
+      lsws: parseFloat(addFormData.lsws),
       examRegulationsId: parseInt(formRef.current.examRegulationsId.value, 10),
     };
 
@@ -38,6 +41,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
         finalAddFormData.moduleName,
         finalAddFormData.sws,
         finalAddFormData.courseName,
+        finalAddFormData.lsws,
         finalAddFormData.examRegulationsId
       )
       .then(() => {
@@ -55,7 +59,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
     event.stopPropagation();
     const visibility = getCurrentVisibilityValue(addFormData.visibility, event.target);
     let value = event.target.value;
-    value = event.target.name === 'visibility' ? value : value;
+    /*     value = event.target.name === 'visibility' ? value : value; */ //TODO: wtf redundant
     setAddFormData({
       ...addFormData,
       [event.target.name]: value,
@@ -64,13 +68,14 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
   }
 
   function getCurrentVisibilityValue(previousVisibilityValue, eventTarget) {
+    const value = parseInt(eventTarget.value);
     let visibility = previousVisibilityValue;
     if (eventTarget.name === 'visibility' || eventTarget.name === 'semester') {
-      if (eventTarget.value === 0) {
+      if (value === 0) {
         visibility = 0;
         setChecked({ ws: false, ss: false, ws_ss: true });
       } else {
-        switch (eventTarget.value % 2) {
+        switch (value % 2) {
           case 1:
             visibility = 1;
             setChecked({ ws: true, ss: false, ws_ss: false });
@@ -90,14 +95,15 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
   return (
     <>
       {permissionId == 1 ? (
-        <Fragment>
+        <div className="course-form">
           <h3>Modul/Lehrveranstaltung hinzufügen</h3>
-          <form onSubmit={handleAddFormSubmit} ref={formRef}>
+          <form onSubmit={handleAddFormSubmit} ref={formRef} id="add-course-form">
             <input type="hidden" name="examRegulationsId" value={examRegulationsId} />
             <input
               style={{ width: '45px' }}
               type="number"
               min="1"
+              max="127"
               name="semester"
               required="required"
               placeholder="Sem."
@@ -124,6 +130,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
               style={{ width: '45px' }}
               type="number"
               min="1"
+              max="127"
               name="sws"
               required="required"
               placeholder="SWS"
@@ -138,7 +145,19 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
               onChange={handleAddFormChange}
               value={addFormData.courseName}
             />
-            <label>
+            <input
+              style={{ width: '50px' }}
+              type="number"
+              min="0"
+              max="64"
+              step="0.01"
+              name="lsws"
+              required="required"
+              placeholder="LSWS"
+              onChange={handleAddFormChange}
+              value={addFormData.lsws}
+            />
+            <label style={{ paddingRight: '10px' }}>
               WS
               <input
                 type="radio"
@@ -148,7 +167,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
                 onChange={handleAddFormChange}
               />
             </label>
-            <label>
+            <label style={{ paddingRight: '10px' }}>
               SS
               <input
                 type="radio"
@@ -158,7 +177,7 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
                 onChange={handleAddFormChange}
               />
             </label>
-            <label style={{ paddingRight: '5px' }}>
+            <label style={{ paddingRight: '10px' }}>
               WS/SS
               <input
                 type="radio"
@@ -169,9 +188,8 @@ function CourseForm({ examRegulationsId, permissionId, rerenderPage, fetchData }
               />
             </label>
             <button type="submit">Hinzufügen</button>
-            <pre>{JSON.stringify(addFormData, null, 2)}</pre>
           </form>
-        </Fragment>
+        </div>
       ) : null}
     </>
   );

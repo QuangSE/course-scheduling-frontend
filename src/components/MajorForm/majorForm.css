@@ -1,0 +1,10 @@
+.major-form {
+  margin: auto;
+  margin-top: 50px;
+  margin-bottom: 200px;
+  border-radius: 25px;
+  border: 1px solid AliceBlue;
+  background-color: AliceBlue;
+  width: 700px;
+  padding: 20px;
+}

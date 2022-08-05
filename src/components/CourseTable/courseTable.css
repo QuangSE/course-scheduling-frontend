@@ -8,8 +8,7 @@ tr {
   empty-cells: show;
 }
 
-td:first-child,
-td:nth-of-type(2) {
+td:first-child {
   text-align: center;
 }
 

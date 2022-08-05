@@ -14,3 +14,42 @@
   display: flex;
   margin: auto;
 }
+
+.entry-button {
+  background-color: #d9dff0;
+  border-color: #d9dff0;
+  display: flex;
+  margin: auto;
+  margin-top: 10px;
+  height: 50px;
+  width: 250px;
+  font-size: 20px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.entry-button:hover {
+  background-color: #bfc9e8;
+  transition: 0.3s;
+}
+
+.entry-button.reset-entries {
+  background-color: red;
+  color: white;
+  border-color: red;
+}
+
+.entry-button.reset-entries:hover {
+  background-color: #c123e0;
+  transition: 0.3s;
+}
+
+.msg {
+  text-align: center;
+  margin-top: 5px;
+  color: green;
+}
+
+.msg.red {
+  color: red;
+}

@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import './courseTable.css';
 
-function HybridView({ apiData, rerenderPage }) {
+function HybridView({ apiData, fetchData, setFetchData }) {
   return (
     <div className="hybdrid-view-container">
       {apiData.tableData.map((element, index) => (
@@ -16,8 +16,9 @@ function HybridView({ apiData, rerenderPage }) {
           examRegGroup={element}
           user={apiData.user}
           docentList={apiData.docentList}
-          key={element.exam_regulations_id + 1}
-          rerenderPage={rerenderPage}
+          key={element.exam_regulations_id}
+          setFetchData={setFetchData}
+          fetchData={fetchData}
           apiData={apiData}
           examRegIndex={index}
         />
@@ -26,17 +27,16 @@ function HybridView({ apiData, rerenderPage }) {
   );
 }
 
-function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
+function HybridTable({ examRegGroup, user, fetchData, setFetchData, docentList }) {
   //use to track which row (docent cell) to edit
   const [editCourseData, setEditCourseData] = useState({ courseId: 0 });
   const [tableVisibility, setTableVisibility] = useState(false);
 
-  const isCompulsoryModules = examRegGroup.isCompulsoryModules;
-  const onlyOneGroup = examRegGroup.onlyOneGroup;
-  const examRegulationsId = !isCompulsoryModules ? examRegGroup.exam_regulations_id : null;
+  function rerenderPage() {
+    setFetchData(!fetchData);
+  }
 
   function getMajorHeading(examRegGroup) {
-    if (isCompulsoryModules) return 'Bachelor Allgemeine Wahlpflichtmodule PO2020';
     const degree = examRegGroup.major.degree;
     const majorName = examRegGroup.major.name;
     const examRegulations = examRegGroup.exam_regulations_group
@@ -47,9 +47,6 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
 
   function isVisible(module) {
     const moduleVisibility = module.visibility;
-    if (isAdmin()) {
-      return true;
-    }
     if (moduleVisibility == 0) {
       return true;
     }
@@ -70,6 +67,10 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     }
   }
 
+  function getErGroupName(module) {
+    return module.er_group_name === 'main' ? null : module.er_group_name;
+  }
+
   function getDocentCourse(course) {
     const length = course.docentCourses.length;
     if (!length) {
@@ -88,7 +89,8 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     if (!docentCourse) {
       return null;
     }
-    if (docentCourse.registered == 1) {
+    if (docentCourse.registered.data[0] == 1) {
+      console.info('registered docent ' + docentCourse.docent.last_name);
       return docentCourse.docent.last_name;
     }
     return null;
@@ -96,36 +98,15 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
 
   async function moduleIsEmpty(moduleId) {
     const coursesRes = await api.getCoursesByModuleId(moduleId);
-    return coursesRes.data.length === 0;
+    return coursesRes.data.length == 0;
   }
 
-  async function erGroupIsEmpty(erGroupId) {
+  async function deleteEmptyErGroup(erGroupId) {
     const res = await api.getModuleErGroupsByErGroupId(erGroupId);
-    return res.data.length === 0 ? true : false;
-  }
-
-  async function examRegHasErGroups() {
-    const res = await api.getErGroups(examRegulationsId);
-    return res.data.erGroups.length > 0 ? true : false;
-  }
-
-  async function deleteEmptyMajor() {
-    const majorId = examRegGroup.major.major_id;
-    const res = await api.getExamRegulations(majorId);
-    if (res.data.examRegulations.length === 0) {
-      api.deleteMajor(majorId);
+    if (res.data.length == 0) {
+      api.deleteErGroup(erGroupId);
     }
   }
-
-  async function deleteEmptyExamRegulations() {
-    /*  const examRegulationsGroup = examRegGroup.exam_regulations_group; */ //TODO: check shared exam regulations
-    if (await examRegHasErGroups()) {
-      return;
-    }
-    await api.deleteExamRegulations(examRegulationsId);
-    deleteEmptyMajor();
-  }
-
   async function handleDeleteClick(course, erGroupId) {
     console.info('delete course');
     const moduleId = course.module_id;
@@ -134,12 +115,9 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
       await api.deleteCourse(courseId);
       if (await moduleIsEmpty(moduleId)) {
         await api.deleteModule(moduleId);
-        if (!isCompulsoryModules && (await erGroupIsEmpty(erGroupId))) {
-          await api.deleteErGroup(erGroupId);
-          await deleteEmptyExamRegulations();
-        }
+        await deleteEmptyErGroup(erGroupId);
       } else {
-        /*   await util.distributeLsws(moduleId); */
+        await util.distributeLsws(moduleId);
       }
     } catch (err) {
       //courses might have already been deleted by others admins
@@ -163,11 +141,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
 
   function handleCancelClick() {
     console.info('cancle click');
-    cancelEdit();
-  }
-
-  function cancelEdit() {
-    setEditCourseData({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: 0 });
+    setEditCourseData({ courseId: 0 });
   }
 
   function handleEditInputChange(event) {
@@ -178,20 +152,15 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
   async function handleSaveClick() {
     const courseId = editCourseData.courseId;
     const docentCourseId = editCourseData.docentCourseId;
-    let inputDocentName = editCourseData.inputDocent;
+    const inputDocentName = editCourseData.inputDocent.toLowerCase().trim();
 
-    if (!inputDocentName || inputDocentName.trim() === '') {
-      if (!docentCourseId) {
-        cancelEdit();
-        return;
-      }
-      await deleteEntryPermanent(docentCourseId);
+    if (inputDocentName === '') {
+      await deRegisterCourse(docentCourseId);
     } else {
-      inputDocentName = inputDocentName.trim();
       const docents = docentList.filter(
-        (docent) => docent.last_name.toLowerCase() === inputDocentName.toLowerCase()
+        (docent) => docent.last_name.toLowerCase() === inputDocentName
       );
-      if (docents.length !== 0) {
+      if (docentCourseId.length !== 0) {
         await registerCourse(docentCourseId, docents[0].docent_id, courseId);
       } else {
         const docentRes = await api.createDocent(inputDocentName);
@@ -200,8 +169,8 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     }
 
     sendNotificationToAdmin();
-    cancelEdit();
-    console.log(inputDocentName ? inputDocentName + ' assigned' : null);
+    setEditCourseData({ courseId: 0 });
+    console.log(inputDocentName + ' assigned');
     rerenderPage();
   }
 
@@ -215,16 +184,19 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     if (docentCourseId) {
       api.updateDocentCourse(docentCourseId, {
         registered: 1,
-        updated_by: user.docent_id,
       });
     } else {
-      api.createDocentCourse(docentId, courseId, 1, user.docent_id);
+      api.createDocentCourse(docentId, courseId);
     }
   }
 
-  function deleteEntryPermanent(docentCourseId) {
-    console.info('deleting docent course entry ' + docentCourseId);
-    api.deleteDocentCourse(docentCourseId);
+  function deRegisterCourse(docentCourseId) {
+    if (docentCourseId) {
+      console.info('deregistering course ' + docentCourseId);
+      api.updateDocentCourse(docentCourseId, {
+        registered: 0,
+      });
+    }
   }
 
   function sendNotificationToAdmin() {
@@ -232,100 +204,12 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
   }
 
   function isAdmin() {
-    return user.permission_id === 1;
+    return user.permission_id == 1;
   }
 
   function editEnabled(courseId) {
     return editCourseData.courseId == courseId;
   }
-
-  const erGroupName = (module) => {
-    if (isCompulsoryModules || onlyOneGroup) {
-      return null;
-    }
-    if (module.er_group_name === 'main') {
-      return <td>{null}</td>;
-    }
-    return <td>{module.er_group_name}</td>;
-  };
-
-  const courses = (module) => {
-    return module.courses.map((course, i) => (
-      <NestledRow key={uuidv4()} index={i}>
-        {course.name}
-      </NestledRow>
-    ));
-  };
-  const lsws = (module) => {
-    return module.courses.map((course, i) => (
-      <NestledRow key={uuidv4()} index={i}>
-        {course.lsws}
-      </NestledRow>
-    ));
-  };
-
-  function getModuleKey(module) {
-    if (isCompulsoryModules) {
-      return module.module_id + module.semester;
-    } else {
-      return module.module_id + module.er_group_id + module.semester;
-    }
-  }
-
-  const registeredDocents = (module) => {
-    return module.courses.map((course, i) => {
-      return editEnabled(course.course_id) ? (
-        <NestledRow key={course.course_id} index={i}>
-          <EditableDocentCell
-            name="docentLastName"
-            value={editCourseData.inputDocent}
-            handleEditInputChange={handleEditInputChange}
-          />
-        </NestledRow>
-      ) : (
-        <NestledRow key={uuidv4()} index={i}>
-          {getRegisteredDocentName(course)}
-        </NestledRow>
-      );
-    });
-  };
-
-  const buttons = (module) => {
-    return module.courses.map((course, i) => {
-      return editEnabled(course.course_id) ? (
-        <NestledRow key={uuidv4()} index={i}>
-          <button type="button" onClick={handleSaveClick}>
-            Speichern
-          </button>
-          <button type="button" onClick={handleCancelClick}>
-            Abbrechen
-          </button>
-        </NestledRow>
-      ) : (
-        <NestledRow key={uuidv4()} index={i}>
-          <button type="button" onClick={() => handleRegisterClick(course)}>
-            Eintragen
-          </button>
-          <button type="button" onClick={(event) => handleEditClick(event, course)}>
-            Bearbeiten
-          </button>
-          {isAdmin() ? (
-            <button type="button" onClick={() => handleDeleteClick(course, module.er_group_id)}>
-              Löschen
-            </button>
-          ) : null}
-        </NestledRow>
-      );
-    });
-  };
-
-  const groupCol = () => {
-    if (isCompulsoryModules || onlyOneGroup) {
-      return null;
-    } else {
-      return <th>Gruppe</th>;
-    }
-  };
 
   return (
     <div className="hybdrid-table-container">
@@ -342,10 +226,9 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
             <thead>
               <tr>
                 <th>Sem.</th>
-                {groupCol()}
+                <th>Gruppe</th>
                 <th>Modul</th>
                 <th>Lehrveranstaltung</th>
-                <th>LSWS</th>
                 <th>Dozent</th>
               </tr>
             </thead>
@@ -355,14 +238,67 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
                   if (isVisible(module))
                     return (
                       //TODO:add visibility toggle for admin
-                      <tr key={getModuleKey(module)}>
+                      <tr key={module.module_id + module.er_group_id}>
                         <td>{module.semester}</td>
-                        {erGroupName(module)}
+                        <td>{getErGroupName(module)}</td>
                         <td>{module.name}</td>
-                        <td>{courses(module)}</td>
-                        <td>{lsws(module)}</td>
-                        <td>{registeredDocents(module)}</td>
-                        <td className="td-button">{buttons(module)}</td>
+                        <td>
+                          {module.courses.map((course, i) => (
+                            <NestledRow key={uuidv4()} index={i}>
+                              {course.name}
+                            </NestledRow>
+                          ))}
+                        </td>
+                        <td>
+                          {module.courses.map((course, i) => {
+                            return editEnabled(course.course_id) ? (
+                              <NestledRow key={course.course_id + module.er_group_id} index={i}>
+                                <EditableDocentCell
+                                  value={editCourseData.inputDocent}
+                                  handleEditInputChange={handleEditInputChange}
+                                />
+                              </NestledRow>
+                            ) : (
+                              <NestledRow key={uuidv4()} index={i}>
+                                {getRegisteredDocentName(course)}
+                              </NestledRow>
+                            );
+                          })}
+                        </td>
+                        <td className="td-button">
+                          {module.courses.map((course, i) => {
+                            return editEnabled(course.course_id) ? (
+                              <NestledRow key={uuidv4()} index={i}>
+                                <button type="button" onClick={handleSaveClick}>
+                                  Speichern
+                                </button>
+                                <button type="button" onClick={handleCancelClick}>
+                                  Abbrechen
+                                </button>
+                              </NestledRow>
+                            ) : (
+                              <NestledRow key={uuidv4()} index={i}>
+                                <button type="button" onClick={() => handleRegisterClick(course)}>
+                                  Eintragen
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={(event) => handleEditClick(event, course)}
+                                >
+                                  Bearbeiten
+                                </button>
+                                {isAdmin() ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteClick(course, module.er_group_id)}
+                                  >
+                                    Löschen
+                                  </button>
+                                ) : null}
+                              </NestledRow>
+                            );
+                          })}
+                        </td>
                       </tr>
                     );
                 })}
@@ -372,6 +308,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
             examRegulationsId={examRegGroup.exam_regulations_id}
             permissionId={user.permission_id}
             rerenderPage={rerenderPage}
+            fetchData={fetchData}
           />
         </div>
       )}
