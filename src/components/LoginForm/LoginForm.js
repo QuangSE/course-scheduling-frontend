@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
+import './loginForm.css';
 
-function LoginForm({ Login, Error }) {
+function LoginForm({ login, setRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const submitHandler = (e) => {
     e.preventDefault(); //prevent a browser reload/refresh
-    Login(username, password);
+    login(username, password);
   };
+
+  function onRegisterClick() {
+    setRegister(true);
+  }
   return (
     <form onSubmit={submitHandler}>
-      <div>
+      <div className="login-form">
         <h2>Login</h2>
-        <div className="login-form">
-          <label htmlFor="username">Benutzername</label>
+        <div className="input-container">
+          {/*           <label htmlFor="username">Benutzername</label> */}
           <input
+            autoFocus={true}
             type="text"
             name="username"
             id="username"
@@ -24,8 +30,8 @@ function LoginForm({ Login, Error }) {
             required
           />
         </div>
-        <div className="login-form">
-          <label htmlFor="password">Passwort</label>
+        <div className="input-container">
+          {/*           <label htmlFor="password">Passwort</label> */}
           <input
             type="password"
             name="password"
@@ -36,7 +42,10 @@ function LoginForm({ Login, Error }) {
             required
           />
         </div>
-        <input type="submit" value="Login" />
+        <div className="btn-container">
+          <input type="submit" value="Login" />
+          <input type="button" value="Registrieren" onClick={onRegisterClick} />
+        </div>
       </div>
     </form>
   );

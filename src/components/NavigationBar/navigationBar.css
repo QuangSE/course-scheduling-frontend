@@ -1,12 +1,14 @@
 nav {
-  height: 50px;
+  height: 80px;
   border: 1px solid #dfdfdf;
+  width: auto;
+  background-color: rgb(231, 235, 238);
 }
 
 .div-header {
-  width: 80%;
+  width: 90%;
   height: 100%;
-  margin: 0 auto;
+  margin: auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -16,7 +18,15 @@ nav {
 li {
   display: inline;
   list-style: none;
-  font-size: 18px;
+  font-size: 25px;
   padding: 10px;
   line-height: 80px;
+}
+Link {
+  text-decoration: none;
+  color: aqua;
+}
+
+Link.active {
+  color: blue;
 }

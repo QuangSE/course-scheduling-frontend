@@ -1,4 +1,4 @@
-table,
+/* table,
 th,
 td,
 tr {
@@ -10,7 +10,7 @@ tr {
 
 td:first-child {
   text-align: center;
-}
+} */
 
 .test {
   display: block;
@@ -77,12 +77,6 @@ p {
   padding-bottom: 30px;
 }
 
-.td-button {
-  border: none;
-  background-color: #710000;
-}
-
 td:last-child {
   border: none;
-  background-color: #ffffff;
 }

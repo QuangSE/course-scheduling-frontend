@@ -1,24 +1,30 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import Logout from '../Logout/Logout';
-import { Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './navigationBar.css';
 
-function Header({ permissionId }) {
+function Header({ permissionId = -1, session = true }) {
   return (
     <nav>
       <div className="div-header">
-        <div>Logo</div>
-        <ul>
-          <li key={1}>
-            <a href="/">Startseite</a>
-          </li>
-          <li key={2}>
-            {permissionId === 1 ? <a href="/docents-overview">Dozentenübersicht</a> : null}
-          </li>
-        </ul>
-        <div className="button">
-          <Logout />
-        </div>
+        <img src={require('../../images/hskl_logo_small.png')} />
+        {session ? (
+          <Fragment>
+            <ul>
+              <li key={1}>
+                <Link to="/">Startseite</Link>
+              </li>
+              <li key={2}>
+                {permissionId === 1 ? <Link to="/docents-overview">Dozentenübersicht</Link> : null}
+              </li>
+            </ul>
+            <div className="button">
+              <Logout />
+            </div>
+          </Fragment>
+        ) : (
+          <h1 style={{ margin: 'auto' }}>Veranstaltungsmanagement HS-KL</h1>
+        )}
       </div>
     </nav>
   );

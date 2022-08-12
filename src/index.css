@@ -2,3 +2,22 @@ body,
 html {
   font-family: Helvetica;
 }
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: auto;
+}
+
+td,
+tr,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 1px;
+  hyphens: auto;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}

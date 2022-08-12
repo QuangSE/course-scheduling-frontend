@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import './majorForm.css';
 
-function MajorForm({ permissionId, rerenderPage }) {
+function MajorForm({ isAdmin, rerenderPage }) {
   const emptyFormData = {
     majorName: '',
     degree: '',
@@ -44,9 +44,9 @@ function MajorForm({ permissionId, rerenderPage }) {
   }
 
   return (
-    <div className="major-form">
-      {permissionId == 1 ? (
-        <Fragment>
+    <Fragment>
+      {isAdmin() ? (
+        <div className="major-form">
           <h3>Studiengang hinzufügen</h3>
           <form onSubmit={handleFormSubmit}>
             <input
@@ -88,9 +88,9 @@ function MajorForm({ permissionId, rerenderPage }) {
             />
             <button type="submit">Hinzufügen</button>
           </form>
-        </Fragment>
+        </div>
       ) : null}
-    </div>
+    </Fragment>
   );
 }
 

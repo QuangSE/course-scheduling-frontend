@@ -2,13 +2,13 @@ import React, { Fragment, useEffect, useState } from 'react';
 import util from '../../util/utilFunctions';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import CourseForm from './CourseForm';
-import EditableDocentCell from './EditableDocentCell';
+import EditableCell from '../EditableCell/EditableCell';
 import NestledRow from '../NestledTable/NestledRow';
 import { v4 as uuidv4 } from 'uuid';
 
 import './courseTable.css';
 
-function HybridView({ apiData, rerenderPage }) {
+function HybridView({ apiData, rerenderPage, isAdmin }) {
   return (
     <div className="hybdrid-view-container">
       {apiData.tableData.map((element, index) => (
@@ -20,15 +20,16 @@ function HybridView({ apiData, rerenderPage }) {
           rerenderPage={rerenderPage}
           apiData={apiData}
           examRegIndex={index}
+          isAdmin={isAdmin}
         />
       ))}
     </div>
   );
 }
 
-function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
+function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
   //use to track which row (docent cell) to edit
-  const [editCourseData, setEditCourseData] = useState({ courseId: 0 });
+  const [editCell, setEditCell] = useState({ courseId: 0 });
   const [tableVisibility, setTableVisibility] = useState(false);
 
   const isCompulsoryModules = examRegGroup.isCompulsoryModules;
@@ -94,6 +95,14 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     return null;
   }
 
+  function getDocentCourseKey(course) {
+    const docentCourse = getDocentCourse(course);
+    if (!docentCourse) {
+      return course.course_id + 1;
+    }
+    return docentCourse.docent_course_id;
+  }
+
   async function moduleIsEmpty(moduleId) {
     const coursesRes = await api.getCoursesByModuleId(moduleId);
     return coursesRes.data.length === 0;
@@ -153,7 +162,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     console.info('change to edit view');
     const docentCourseId = getDocentCourseId(course);
 
-    setEditCourseData({
+    setEditCell({
       courseId: course.course_id,
       moduleId: course.module_id,
       docentCourseId: docentCourseId,
@@ -167,18 +176,18 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
   }
 
   function cancelEdit() {
-    setEditCourseData({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: 0 });
+    setEditCell({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: 0 });
   }
 
   function handleEditInputChange(event) {
     event.preventDefault();
-    setEditCourseData({ ...editCourseData, inputDocent: event.target.value });
+    setEditCell({ ...editCell, inputDocent: event.target.value });
   }
 
   async function handleSaveClick() {
-    const courseId = editCourseData.courseId;
-    const docentCourseId = editCourseData.docentCourseId;
-    let inputDocentName = editCourseData.inputDocent;
+    const courseId = editCell.courseId;
+    const docentCourseId = editCell.docentCourseId;
+    let inputDocentName = editCell.inputDocent;
 
     if (!inputDocentName || inputDocentName.trim() === '') {
       if (!docentCourseId) {
@@ -231,12 +240,8 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
     //TODO: send notification to admin
   }
 
-  function isAdmin() {
-    return user.permission_id === 1;
-  }
-
   function editEnabled(courseId) {
-    return editCourseData.courseId == courseId;
+    return editCell.courseId == courseId;
   }
 
   const erGroupName = (module) => {
@@ -266,19 +271,19 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList }) {
 
   function getModuleKey(module) {
     if (isCompulsoryModules) {
-      return module.module_id + module.semester;
+      return module.module_id + ' ' + module.semester;
     } else {
-      return module.module_id + module.er_group_id + module.semester;
+      return module.module_id + ' ' + module.er_group_id + ' ' + module.semester;
     }
   }
 
   const registeredDocents = (module) => {
     return module.courses.map((course, i) => {
       return editEnabled(course.course_id) ? (
-        <NestledRow key={course.course_id} index={i}>
-          <EditableDocentCell
+        <NestledRow key={getDocentCourseKey(course)} index={i}>
+          <EditableCell
             name="docentLastName"
-            value={editCourseData.inputDocent}
+            value={editCell.inputDocent}
             handleEditInputChange={handleEditInputChange}
           />
         </NestledRow>

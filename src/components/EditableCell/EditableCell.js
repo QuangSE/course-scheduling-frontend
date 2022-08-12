@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-function EditableDocentCell({ value, name, handleEditInputChange }) {
+function EditableCell({ value, name, handleEditInputChange }) {
   return (
     <Fragment>
       <input
@@ -15,4 +15,4 @@ function EditableDocentCell({ value, name, handleEditInputChange }) {
   );
 }
 
-export default EditableDocentCell;
+export default EditableCell;

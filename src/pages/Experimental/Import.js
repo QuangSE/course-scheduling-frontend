@@ -11,6 +11,10 @@ const {
 
 const API_BASE_URL = require('../../util/constants').API_BASE_URL;
 
+/*
+This file was only used at development stage for importing the excel file into the database
+*/
+
 function Import() {
   const handleForce = (data, fileInfo) => {
     console.log('makroökonomie');

@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import LoginForm from '../../components/LoginForm/LoginForm';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import NavBar from '../../components/NavigationBar/NavigationBar';
+import LoginForm from '../../components/LoginForm/LoginForm';
+import RegistrationForm from '../../components/RegistrationForm/RegistrationForm';
 import './login.css';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 
 function LoginPage() {
-  const [error, setError] = useState('');
+  const [error, setError] = useState();
   const [loginStatus, setLoginStatus] = useState(false);
+  const [register, setRegister] = useState(false);
   const navigate = useNavigate();
 
   /*   Axios.defaults.withCredentials = true;
@@ -33,16 +37,22 @@ function LoginPage() {
       console.log(res.data);
       setLoginStatus(true);
     } catch (err) {
-      console.log(JSON.stringify(err.response.data));
       setError(err.response.data);
     }
   };
 
   return (
-    <div className="login">
-      <LoginForm Login={onLogin} error={error} />
-      <h2>TODO: Register</h2>
-    </div>
+    <Fragment>
+      <NavBar session={false} />
+      {register ? (
+        <RegistrationForm login={onLogin} setRegister={setRegister} />
+      ) : (
+        <Fragment>
+          <LoginForm login={onLogin} setRegister={setRegister} />
+          <div style={{ color: 'red' }}>{error ? 'Anmeldedaten sind ungültig' : null}</div>
+        </Fragment>
+      )}
+    </Fragment>
   );
 }
 

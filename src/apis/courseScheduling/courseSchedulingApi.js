@@ -34,6 +34,10 @@ class CourseSchedulingApi {
     return this.api.get(`${AUTHENTICATION}/session`);
   }
 
+  getExistingDocent(lastName, firstName) {
+    return this.api.post(`${AUTHENTICATION}/existing-docent`, { lastName, firstName });
+  }
+
   deleteSession() {
     return this.api.post(`${AUTHENTICATION}/delete-session`, { logout: true });
   }
@@ -104,6 +108,10 @@ class CourseSchedulingApi {
     return this.api.get(DOCENT);
   }
 
+  getDocentCourseOverview() {
+    return this.api.get(`${DOCENT}/docent-course/overview`);
+  }
+
   getMinimalDocentList() {
     return this.api.get(`${DOCENT}/list/minimal`);
   }
@@ -158,7 +166,7 @@ class CourseSchedulingApi {
     });
   }
 
-  createDocent(lastName, title = null, firstName = null, email = null, job_type = null) {
+  createDocent(lastName, firstName = null, title = null, email = null, job_type = null) {
     return this.api.post(DOCENT, {
       title: title,
       first_name: firstName,
@@ -247,6 +255,15 @@ class CourseSchedulingApi {
 
   getMyVisibleCourses() {
     return this.api.get(`${USER}/my-account/visible-courses`);
+  }
+
+  createAccount(username, password, docentId, permissionId = 2) {
+    return this.api.post(`${USER}/`, {
+      username: username,
+      password: password,
+      docent_id: docentId,
+      permission_id: permissionId,
+    });
   }
 }
 

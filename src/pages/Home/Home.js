@@ -6,6 +6,7 @@ import util from '../../util/utilFunctions';
 import './home.css';
 import HybridView from '../../components/CourseTable/CourseTable.js';
 import MajorForm from '../../components/MajorForm/MajorForm';
+import { type } from '@testing-library/user-event/dist/type';
 
 export default function Home() {
   const [apiData, setApiData] = useState();
@@ -15,6 +16,10 @@ export default function Home() {
 
   function rerenderPage() {
     setFetchData(!fetchData);
+  }
+
+  function isAdmin() {
+    return apiData.user.permission_id === 1;
   }
 
   useEffect(() => {
@@ -145,16 +150,145 @@ export default function Home() {
     rerenderPage();
   }
 
-  const resetEntriesButton = () => {
-    if (apiData.user.permission_id === 1) {
-      return (
-        <button className="entry-button reset-entries" type="button" onClick={resetEntries}>
-          Alle Dozenteneinträge zurücksetzen
-        </button>
-      );
-    } else {
-      return null;
+  function typeAbbreviation(type) {
+    switch (type) {
+      case 'Professor':
+        return 'P';
+        break;
+      case 'Lehrkraft':
+        return 'LK';
+        break;
+      case 'Lehrbeauftragter':
+        return 'LB';
+        break;
+      case 'Vertretungsprofessor':
+        return 'VP';
+        break;
+      default:
+        return '';
     }
+  }
+
+  function convertToCsv(examReg) {
+    let csv = '';
+    if (examReg.isCompulsoryModules) {
+    } else {
+      csv = `${examReg.major.degree} ${examReg.major.name} ${
+        examReg.exam_regulations_group ? examReg.exam_regulations_group : examReg.year
+      };;;;;;;\n`;
+      csv += 'Veranstaltungsmanagement;;;;;;;\n';
+      csv += 'Sem.;Gruppe;Modul;Lehrveranstaltung;ModulSWS;Dozent;Art;LSWS' + '\n';
+      for (const module of examReg.modules) {
+        const groupName = module.er_group_name === 'main' ? '' : module.er_group_name;
+        const courses = module.courses;
+        if (courses.length !== 0) {
+          for (let i = 0; i < courses.length; i++) {
+            let docent = '---';
+            let docentName = '---';
+            let type = '---';
+            if (courses[i].docentCourse && courses[i].docentCourse.registered === 1) {
+              docent = courses[i].docentCourse.docent;
+              docentName = docent.name;
+              type = typeAbbreviation(docent.job_type);
+            }
+            csv += `${module.semester};${groupName};${module.name};${courses[i].name};${module.sws};${docentName};${type};${courses[i].lsws}\n`;
+          }
+        } else {
+          csv += `${module.semester};${groupName};${module.name};---;---;---;---;---\n`;
+        }
+      }
+    }
+    return csv;
+  }
+
+  function majorAbbreviation(name) {
+    switch (name) {
+      case 'Finanzdienstleistungen':
+        return 'Fidi';
+        break;
+      case 'Wirtschaftsinformatik':
+        return 'Winfo';
+        break;
+      case 'Mittelstandsökonomie':
+        return 'Mö';
+        break;
+      case 'Technische Betriebswirtschaftslehre':
+        return 'TBW';
+        break;
+      case 'Industrial and Digital Management':
+        return 'IDM';
+        break;
+      case 'International Business Administration':
+        return 'IBA';
+        break;
+      case 'Wirtschaft und Recht':
+        return 'WuR';
+        break;
+      case 'Information Management':
+        return 'IM';
+        break;
+      case 'Mittelstandsmanagement':
+        return 'MM';
+        break;
+      case 'Financial Services Management':
+        return 'FSM';
+        break;
+      case 'International Management and Finance':
+        return 'IMF';
+        break;
+      case 'Mittelstandsmanagement':
+        return 'MM';
+        break;
+      case 'Wirtschaftsingenieurwesen - Logistik & Produktionsmanagement':
+        return 'WLP';
+        break;
+      default:
+        return name;
+    }
+  }
+
+  function degreeAbbreviations(degree) {
+    if (degree === 'Bachelor') {
+      return 'BA';
+    }
+    if (degree === 'Master') {
+      return 'MA';
+    }
+    return degree;
+  }
+
+  function getFileName(examReg) {
+    if (examReg.isCompulsoryModules) {
+      return `BA_allg_WahlPflichtM_2020`;
+    }
+    const major = examReg.major;
+    const examRegulations = examReg.exam_regulations_group
+      ? `PO${examReg.exam_regulations_group}`
+      : `PO${examReg.year}`;
+    return `${degreeAbbreviations(major.degree)}_${majorAbbreviation(
+      major.name
+    )}_${examRegulations}`;
+  }
+
+  async function exportToCsv(event) {
+    const universalBOM = '\uFEFF';
+    event.preventDefault();
+    for (const examReg of apiData.tableData) {
+      const csv = await convertToCsv(examReg);
+      const element = document.createElement('a');
+      element.href = 'data:text/csv;charset=utf-8,' + encodeURI(universalBOM + csv);
+      element.download = `${getFileName(examReg)}.csv`;
+      document.body.appendChild(element);
+      element.click();
+    }
+  }
+
+  const resetEntriesButton = () => {
+    return (
+      <button className="entry-button reset-entries" type="button" onClick={resetEntries}>
+        Alle Dozenteneinträge zurücksetzen
+      </button>
+    );
   };
 
   const resetEntriesMsg = () => {
@@ -179,25 +313,39 @@ export default function Home() {
     ) : null;
   };
 
+  const csvExportButton = () => {
+    return (
+      <button className="entry-button" type="button" onClick={exportToCsv}>
+        CSV-Export
+      </button>
+    );
+  };
+
   return (
     <Fragment>
       {apiData ? (
-        <div>
+        <Fragment>
           <NavBar permissionId={apiData.user.permission_id} />
-          <h2 className="title">Ist-LSWS (ungenau): {apiData.myTotalLsws}</h2>
-          <div>
-            {resetEntriesButton()}
-            {resetEntriesMsg()}
-            {adaptEntriesButton()}
-            {adaptEntriesMsg()}
+          <h2 className="title">Ist-LSWS: {apiData.myTotalLsws}</h2>
+          <div className="admin-buttons">
+            {isAdmin() ? (
+              <Fragment>
+                <div>
+                  {resetEntriesButton()}
+                  {resetEntriesMsg()}
+                </div>
+                <div>{csvExportButton()}</div>
+              </Fragment>
+            ) : null}
           </div>
-          <div></div>
+          {adaptEntriesButton()}
+          {adaptEntriesMsg()}
           <div className="content-center">
-            <HybridView apiData={apiData} rerenderPage={rerenderPage} />
+            <HybridView apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
           </div>
           <div className="content-center"></div>
-          <MajorForm permissionId={apiData.user.permission_id} rerenderPage={rerenderPage} />
-        </div>
+          <MajorForm isAdmin={isAdmin} rerenderPage={rerenderPage} />
+        </Fragment>
       ) : null}
     </Fragment>
   );
