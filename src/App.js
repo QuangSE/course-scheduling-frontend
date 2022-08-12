@@ -14,10 +14,9 @@ function App() {
           <Route element={<ProtectedRoutes />}>
             <Route path="/" element={<Home />} />
             <Route path="/docents-overview" element={<DocentsOverview />} />
+            <Route path="/experimental" element={<Import />} />
           </Route>
-          {/*  <Route path="/" element={<Home />} /> */}
           <Route path="/login" element={<Login />} />
-          <Route path="/experimental" element={<Import />} />
         </Routes>
       </BrowserRouter>
     </div>

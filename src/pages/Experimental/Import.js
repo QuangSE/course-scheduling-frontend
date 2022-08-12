@@ -11,6 +11,7 @@ const API_BASE_URL = require('../../util/constants').API_BASE_URL;
 
 /*
 This file was only used at development stage for importing the excel file into the database
+The import doesn't work perfectly though
 */
 
 function Import() {
@@ -34,8 +35,9 @@ function Import() {
     visibility = null
   ) {
     let tmpRes = await api.getModuleByNameSemester(name, semester);
+
     let moduleRes = { data: null };
-    if (tmpRes.data && examRegulationsId !== 0) {
+    if (tmpRes.data.length !== 0) {
       let erId = examRegulationsId;
       if (ofOtherMajor) erId = ofOtherMajor;
       for (const module of tmpRes.data) {
@@ -51,6 +53,18 @@ function Import() {
       moduleRes = await api.createModule(name, semester, sws, visibility);
     }
     return moduleRes;
+  }
+
+  async function createCModuleIfNotExists(name, semester, sws, visibility = null) {
+    let moduleRes = await api.getModuleByNameSemester(name, semester);
+
+    if (moduleRes.data.length === 0) {
+      console.info('does not exist in this exam regulations');
+      moduleRes = await api.createModule(name, semester, sws, visibility);
+      return moduleRes.data.module_id;
+    }
+    console.info(moduleRes);
+    return moduleRes.data[0].module_id;
   }
 
   async function registerDocentCourse(courseId, docentName) {
@@ -88,8 +102,7 @@ function Import() {
 
     for (const line of csvData) {
       console.info(line.modul);
-      const moduleRes = await createModuleIfNotExists(line.modul, line.sem, line.msws, 0);
-      const moduleId = moduleRes.data.module_id;
+      const moduleId = await createCModuleIfNotExists(line.modul, line.sem, line.msws, 1);
 
       if (line.fidi) {
         await createCompulsoryModuleIfNotExists(moduleId, fidiId);
@@ -120,7 +133,7 @@ function Import() {
   }
 
   /*  format of valid csv file
-    examRegulationsId,Sem;gruppe;Modul;Lehrveranstaltung;ModulSWS;Dozent;Art;LSWS 
+    examRegulationsId,ofOtherMajor,Sem;gruppe;Modul;Lehrveranstaltung;ModulSWS;Dozent;Art;LSWS 
 
     for now only "Dozent" can be empty, everything else must have a value 
     examRegulationsId has to be specified in a column

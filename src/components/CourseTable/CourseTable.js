@@ -1,4 +1,5 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useState } from 'react';
+
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import CourseForm from '../CourseForm/CourseForm';
 import EditableCell from '../EditableCell/EditableCell';
