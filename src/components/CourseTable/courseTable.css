@@ -34,7 +34,7 @@ td:first-child {
 }
 
 .major-header {
-  display: inline;
+  display: inline-flex;
   hyphens: auto;
   padding-left: 15px;
   color: gray;

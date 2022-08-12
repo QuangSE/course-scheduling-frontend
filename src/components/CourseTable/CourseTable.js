@@ -1,7 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
-import util from '../../util/utilFunctions';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
-import CourseForm from './CourseForm';
+import CourseForm from '../CourseForm/CourseForm';
 import EditableCell from '../EditableCell/EditableCell';
 import NestledRow from '../NestledTable/NestledRow';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,7 +35,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   const onlyOneGroup = examRegGroup.onlyOneGroup;
   const examRegulationsId = !isCompulsoryModules ? examRegGroup.exam_regulations_id : null;
 
-  function getMajorHeading(examRegGroup) {
+  function getMajorHeading() {
     if (isCompulsoryModules) return 'Bachelor Allgemeine Wahlpflichtmodule PO2020';
     const degree = examRegGroup.major.degree;
     const majorName = examRegGroup.major.name;
@@ -46,9 +45,9 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
     return `${degree} ${majorName} ${examRegulations}`;
   }
 
-  function isVisible(module) {
+  function isVisible(module, adminView = true) {
     const moduleVisibility = module.visibility;
-    if (isAdmin()) {
+    if (isAdmin() && adminView) {
       return true;
     }
     if (moduleVisibility == 0) {
@@ -335,12 +334,32 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
     }
   };
 
+  const registeredCourseCounter = () => {
+    let visibleCourses = examRegGroup.numberOfVisibleCourses;
+    let registeredCourses = examRegGroup.numberOfRegisteredCourses;
+    /*     for (const module of examRegGroup.modules) {
+      if (isVisible(module, false) && module.courses.length !== 0) {
+        for (const course of module.courses) {
+          ++visibleCourses;
+          if (course.docentCourses.length !== 0 && course.docentCourses[0].registered === 1) {
+            ++registeredCourses;
+          }
+        }
+      }
+    } */
+    return (
+      <div style={{ color: 'black', paddingLeft: '30px' }}>
+        {registeredCourses}/{visibleCourses}
+      </div>
+    );
+  };
   return (
     <div className="hybdrid-table-container">
       <div className="first-item" onClick={(e) => setTableVisibility(!tableVisibility)}>
         <div className={`tree-toggler ${tableVisibility ? 'active' : null}`}></div>
         <h2 className={`major-header ${tableVisibility ? 'active' : null}`}>
-          {getMajorHeading(examRegGroup)}
+          {getMajorHeading()}
+          {registeredCourseCounter()}
         </h2>
       </div>
 

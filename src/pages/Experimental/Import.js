@@ -1,13 +1,11 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
 import CSVReader from 'react-csv-reader';
-import Axios from 'axios';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 const {
   createModuleIfNotExists,
   createErGroupIfNotExists,
   createModuleErGroupIfNotExist,
-} = require('../../components/CourseTable/addCourseHandler');
+} = require('../../components/CourseForm/addCourseHandler');
 
 const API_BASE_URL = require('../../util/constants').API_BASE_URL;
 

@@ -28,8 +28,31 @@ async function distributeLsws(moduleId) {
   }
 }
 
+function isVisible(module) {
+  const moduleVisibility = module.visibility;
+  if (moduleVisibility == 0) {
+    return true;
+  }
+  //TODO: ask when to display the module
+  const currentMonth = new Date().getMonth();
+  if (currentMonth >= 5 && currentMonth <= 11) {
+    if (moduleVisibility == 1) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    if (moduleVisibility == 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+}
+
 export default {
   getIndexOfPropertyMatch,
   getLatestDocentCourseId,
   distributeLsws,
+  isVisible,
 };

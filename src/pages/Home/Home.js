@@ -1,12 +1,10 @@
-import React, { useMemo, useState, useEffect, Fragment } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useState, useEffect, Fragment } from 'react';
 import NavBar from '../../components/NavigationBar/NavigationBar';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import util from '../../util/utilFunctions';
 import './home.css';
 import HybridView from '../../components/CourseTable/CourseTable.js';
 import MajorForm from '../../components/MajorForm/MajorForm';
-import { type } from '@testing-library/user-event/dist/type';
 
 export default function Home() {
   const [apiData, setApiData] = useState();
@@ -42,7 +40,18 @@ export default function Home() {
   }, [fetchData]);
 
   function processData(data, compulsoryModules) {
-    let processedData = [{ isCompulsoryModules: true, modules: compulsoryModules }];
+    let processedData = [
+      {
+        isCompulsoryModules: true,
+        modules: compulsoryModules,
+        numberOfVisibleCourses: 0,
+        numberOfRegisteredCourses: 0,
+      },
+    ];
+
+    for (const module of processedData[0].modules) {
+      setRegisteredCourseCounter(processedData[0], module);
+    }
 
     for (const i in data) {
       if (!isSameExamRegulationsGroup(processedData, data[i])) {
@@ -64,13 +73,24 @@ export default function Home() {
         module.er_group_id = erGroups.er_group_id;
         module.er_group_name = erGroups.name;
         if (erGroups.name !== 'main') onlyOneGroup = false;
-        if (module.visibility == 1) {
-          processedData[index].numberOfVisibleCourses += 1;
-        }
+
+        setRegisteredCourseCounter(processedData[index], module);
         processedData[index].modules.push(module);
       }
     }
     processedData[index].onlyOneGroup = onlyOneGroup;
+  }
+
+  function setRegisteredCourseCounter(examRegGroup, module) {
+    console.info(examRegGroup);
+    if (util.isVisible(module) && module.courses.length !== 0) {
+      for (const course of module.courses) {
+        examRegGroup.numberOfVisibleCourses += 1;
+        if (course.docentCourses.length !== 0 && course.docentCourses[0].registered === 1) {
+          examRegGroup.numberOfRegisteredCourses += 1;
+        }
+      }
+    }
   }
 
   function pushElement(processedData, examRegulations) {
@@ -81,6 +101,7 @@ export default function Home() {
       major: examRegulations.major,
       modules: [],
       numberOfVisibleCourses: 0,
+      numberOfRegisteredCourses: 0,
       isCompulsoryModules: false,
       onlyOneGroup: true,
     });
