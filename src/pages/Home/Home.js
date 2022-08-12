@@ -348,19 +348,21 @@ export default function Home() {
         <Fragment>
           <NavBar permissionId={apiData.user.permission_id} />
           <h2 className="title">Ist-LSWS: {apiData.myTotalLsws}</h2>
-          <div className="admin-buttons">
-            {isAdmin() ? (
-              <Fragment>
-                <div>
-                  {resetEntriesButton()}
-                  {resetEntriesMsg()}
-                </div>
-                <div>{csvExportButton()}</div>
-              </Fragment>
-            ) : null}
+          <div className="btn-group">
+            <div className="admin-buttons">
+              {isAdmin() ? (
+                <Fragment>
+                  <div>
+                    {resetEntriesButton()}
+                    {resetEntriesMsg()}
+                  </div>
+                  <div>{csvExportButton()}</div>
+                </Fragment>
+              ) : null}
+            </div>
+            {adaptEntriesButton()}
+            {adaptEntriesMsg()}
           </div>
-          {adaptEntriesButton()}
-          {adaptEntriesMsg()}
           <div className="content-center">
             <HybridView apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
           </div>

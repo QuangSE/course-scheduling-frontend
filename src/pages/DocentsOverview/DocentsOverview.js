@@ -23,7 +23,7 @@ function DocentsOverview() {
       {docentsData ? (
         <Fragment>
           <NavBar permissionId={session.permission_id} />
-          <h1 style={{ textAlign: 'center' }}>Dozentenübersicht</h1>
+          <h1 style={{ textAlign: 'center', marginTop: '100px' }}>Dozentenübersicht</h1>
           <div className="docents-overview-container">
             <table>
               <thead>

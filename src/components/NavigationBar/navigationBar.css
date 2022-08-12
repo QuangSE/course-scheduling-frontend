@@ -1,8 +1,12 @@
 nav {
-  height: 80px;
-  border: 1px solid #dfdfdf;
-  width: auto;
+  height: auto;
+  /*   border: 1px solid #dfdfdf; */
+  /*   width: 100%; */
   background-color: rgb(231, 235, 238);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 
 .div-header {
@@ -16,11 +20,11 @@ nav {
 }
 
 li {
-  display: inline;
+  display: inline-flex;
   list-style: none;
-  font-size: 25px;
-  padding: 10px;
-  line-height: 80px;
+  font-size: 22px;
+  padding-right: 20px;
+  line-height: 25px;
 }
 Link {
   text-decoration: none;

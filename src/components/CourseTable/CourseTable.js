@@ -338,34 +338,32 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   const registeredCourseCounter = () => {
     let visibleCourses = examRegGroup.numberOfVisibleCourses;
     let registeredCourses = examRegGroup.numberOfRegisteredCourses;
-    /*     for (const module of examRegGroup.modules) {
-      if (isVisible(module, false) && module.courses.length !== 0) {
-        for (const course of module.courses) {
-          ++visibleCourses;
-          if (course.docentCourses.length !== 0 && course.docentCourses[0].registered === 1) {
-            ++registeredCourses;
-          }
-        }
-      }
-    } */
+
     return (
-      <div style={{ color: 'black', paddingLeft: '30px' }}>
-        {registeredCourses}/{visibleCourses}
-      </div>
+      <>
+        {isAdmin() ? (
+          <div style={{ color: 'black', paddingLeft: '30px' }}>
+            {registeredCourses}/{visibleCourses}
+          </div>
+        ) : null}
+      </>
     );
   };
+
   return (
     <div className="hybdrid-table-container">
       <div className="first-item" onClick={(e) => setTableVisibility(!tableVisibility)}>
-        <div className={`tree-toggler ${tableVisibility ? 'active' : null}`}></div>
-        <h2 className={`major-header ${tableVisibility ? 'active' : null}`}>
-          {getMajorHeading()}
-          {registeredCourseCounter()}
-        </h2>
+        <div className="heading-container">
+          <div className={`tree-toggler ${tableVisibility ? 'active' : null}`}></div>
+          <h2 className={`major-header ${tableVisibility ? 'active' : null}`}>
+            {getMajorHeading()}
+            {registeredCourseCounter()}
+          </h2>
+        </div>
       </div>
 
       {tableVisibility && (
-        <div className="child">
+        <div className="table-container">
           <table className="master-table">
             <thead>
               <tr>

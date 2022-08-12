@@ -1,21 +1,8 @@
-/* table,
-th,
-td,
-tr {
-  border: 1px solid black;
-  border-collapse: collapse;
-  hyphens: auto;
-  empty-cells: show;
-}
-
-td:first-child {
-  text-align: center;
-} */
-
+/* 
 .test {
   display: block;
   border: 'none';
-}
+} */
 
 .tree-toggler {
   display: inline-block;
@@ -33,10 +20,16 @@ td:first-child {
   transform: rotate(90deg);
 }
 
+.heading-container {
+  padding-left: 70px;
+  padding-right: 70px;
+  margin: auto;
+}
+
 .major-header {
   display: inline-flex;
   hyphens: auto;
-  padding-left: 15px;
+  padding-left: 20px;
   color: gray;
 }
 
@@ -73,7 +66,7 @@ p {
   padding-bottom: 10px;
   padding-top: 100px;
 }
-.child {
+.table-container {
   padding-bottom: 30px;
 }
 
