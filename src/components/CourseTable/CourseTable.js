@@ -161,12 +161,13 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
     event.preventDefault();
     console.info('change to edit view');
     const docentCourseId = getDocentCourseId(course);
+    const inputDocent = getRegisteredDocentName(course) ? getRegisteredDocentName(course) : '';
 
     setEditCell({
       courseId: course.course_id,
       moduleId: course.module_id,
       docentCourseId: docentCourseId,
-      inputDocent: getRegisteredDocentName(course),
+      inputDocent: inputDocent,
     });
   }
 
@@ -176,7 +177,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   }
 
   function cancelEdit() {
-    setEditCell({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: 0 });
+    setEditCell({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: '' });
   }
 
   function handleEditInputChange(event) {
@@ -185,6 +186,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   }
 
   async function handleSaveClick() {
+    //FIXME:
     const courseId = editCell.courseId;
     const docentCourseId = editCell.docentCourseId;
     let inputDocentName = editCell.inputDocent;
@@ -223,6 +225,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   function registerCourse(docentCourseId, docentId, courseId) {
     if (docentCourseId) {
       api.updateDocentCourse(docentCourseId, {
+        docent_id: docentId,
         registered: 1,
         updated_by: user.docent_id,
       });
