@@ -133,7 +133,7 @@ function RegistrationForm({ login, setRegister }) {
           />
           <button type="submit">Account erstellen</button>
         </form>
-        <div style={{ color: 'red' }}>{error}</div>
+        <div style={{ color: 'red', paddingTop: '10px' }}>{error}</div>
       </div>
     </Fragment>
   );

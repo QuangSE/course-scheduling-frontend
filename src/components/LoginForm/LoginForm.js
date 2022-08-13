@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './loginForm.css';
 
-function LoginForm({ login, setRegister }) {
+function LoginForm({ login, setRegister, error }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -45,6 +45,9 @@ function LoginForm({ login, setRegister }) {
         <div className="btn-container">
           <input type="submit" value="Login" />
           <input type="button" value="Registrieren" onClick={onRegisterClick} />
+          <div style={{ color: 'red', paddingTop: '10px' }}>
+            {error ? 'Anmeldedaten sind ungültig' : null}
+          </div>
         </div>
       </div>
     </form>

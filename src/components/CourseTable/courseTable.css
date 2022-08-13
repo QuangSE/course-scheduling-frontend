@@ -14,7 +14,7 @@
 }
 
 .tree-toggler.active {
-  transition-property: transform;
+  transition-property: transform, color;
   transition-duration: 0.3s;
   border-left: 12px solid black;
   transform: rotate(90deg);

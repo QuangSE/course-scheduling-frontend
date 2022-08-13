@@ -3,10 +3,12 @@
   max-width: 200px;
   width: auto;
   margin: auto;
-  margin-top: 100px;
+  margin-top: 200px;
   border-radius: 25px;
   background-color: rgb(231, 235, 238);
-  width: auto;
-  padding: 15px;
-  hyphens: auto;
+  padding: 30px;
+}
+
+input {
+  margin-bottom: 10px;
 }

@@ -48,8 +48,7 @@ function LoginPage() {
         <RegistrationForm login={onLogin} setRegister={setRegister} />
       ) : (
         <Fragment>
-          <LoginForm login={onLogin} setRegister={setRegister} />
-          <div style={{ color: 'red' }}>{error ? 'Anmeldedaten sind ungültig' : null}</div>
+          <LoginForm login={onLogin} error={error} setRegister={setRegister} />
         </Fragment>
       )}
     </Fragment>
