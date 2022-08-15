@@ -29,7 +29,7 @@ function HybridView({ apiData, rerenderPage, isAdmin }) {
 
 function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
   //use to track which row (docent cell) to edit
-  const [editCell, setEditCell] = useState({ courseId: 0 });
+  const [editCell, setEditCell] = useState({ courseId: -1 });
   const [tableVisibility, setTableVisibility] = useState(false);
 
   const isCompulsoryModules = examRegGroup.isCompulsoryModules;
@@ -177,7 +177,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   }
 
   function cancelEdit() {
-    setEditCell({ courseId: 0, moduleId: 0, docentCourseId: 0, inputDocent: '' });
+    setEditCell({ courseId: -1, moduleId: -1, docentCourseId: -1, inputDocent: '' });
   }
 
   function handleEditInputChange(event) {
@@ -206,7 +206,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
         await registerCourse(docentCourseId, docents[0].docent_id, courseId);
       } else {
         const docentRes = await api.createDocent(inputDocentName);
-        await registerCourse(docentCourseId, docentRes.docent_id, courseId);
+        await registerCourse(docentCourseId, docentRes.data.docent_id, courseId);
       }
     }
 
