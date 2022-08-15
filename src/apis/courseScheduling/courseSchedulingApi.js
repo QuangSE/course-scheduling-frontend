@@ -58,6 +58,10 @@ class CourseSchedulingApi {
     return this.api.get(`${MAJOR}/${majorId}/exam-regulations`);
   }
 
+  getErByMajorIdYear(majorId, year) {
+    return this.api.post(`${EXAM_REGULATIONS}/by-major-id-year`, { majorId, year });
+  }
+
   createExamRegulations(year, examRegulationsGroup, majorId) {
     return this.api.post(EXAM_REGULATIONS, {
       year: year,

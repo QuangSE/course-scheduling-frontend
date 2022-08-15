@@ -30,7 +30,7 @@ function MajorForm({ isAdmin, rerenderPage }) {
 
     const res = await createMajorIfNotExist(majorName, degree);
     const majorId = res.data.major_id;
-    await api.createExamRegulations(examRegulationsYear, examRegulationsGroup, majorId);
+    await createExamRegulationsIfNotExist(examRegulationsYear, examRegulationsGroup, majorId);
     setMajorFormData(emptyFormData);
     rerenderPage();
   }
@@ -39,6 +39,18 @@ function MajorForm({ isAdmin, rerenderPage }) {
     let res = await api.getMajorByNameDegree(name, degree);
     if (!res.data) {
       res = await api.createMajor(name, degree);
+    }
+    return res;
+  }
+
+  async function createExamRegulationsIfNotExist(
+    examRegulationsYear,
+    examRegulationsGroup,
+    majorId
+  ) {
+    let res = await api.getErByMajorIdYear(majorId, examRegulationsYear);
+    if (!res.data) {
+      res = await api.createExamRegulations(examRegulationsYear, examRegulationsGroup, majorId);
     }
     return res;
   }
@@ -68,25 +80,27 @@ function MajorForm({ isAdmin, rerenderPage }) {
               value={majorFormData.degree}
             />
             <input
-              style={{}}
+              style={{ width: '100px' }}
               type="number"
               name="examRegulationsYear"
               required="required"
               min="2010"
-              max="9999"
-              placeholder="Prüfungsordnung z.B 2020"
+              max="2155"
+              placeholder="PO z.B 2020"
               onChange={handleFormChange}
               value={majorFormData.examRegulationsYear}
             />
             <input
-              style={{}}
+              style={{ width: '200px' }}
               type="text"
               name="examRegulationsGroup"
               placeholder="PO-Gruppe z.B 'PO2019&PO2022'"
               onChange={handleFormChange}
               value={majorFormData.examRegulationsGroup}
             />
-            <button type="submit">Hinzufügen</button>
+            <button style={{ marginLeft: '11px' }} type="submit">
+              Hinzufügen
+            </button>
           </form>
         </div>
       ) : null}
