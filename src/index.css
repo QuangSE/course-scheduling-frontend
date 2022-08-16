@@ -9,6 +9,11 @@ table {
   width: auto;
 }
 
+thead {
+  background-color: #008f7a;
+  color: #ffffff;
+}
+
 td,
 tr,
 th {

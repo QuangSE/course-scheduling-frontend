@@ -82,7 +82,6 @@ export default function Home() {
   }
 
   function setRegisteredCourseCounter(examRegGroup, module) {
-    console.info(examRegGroup);
     if (util.isVisible(module) && module.courses.length !== 0) {
       for (const course of module.courses) {
         examRegGroup.numberOfVisibleCourses += 1;

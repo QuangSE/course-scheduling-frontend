@@ -16,7 +16,6 @@ async function addCourse(
   const erGroupId = erGroupRes.data.er_group_id;
   await createModuleErGroupIfNotExist(erGroupId, moduleId);
   const courseRes = await api.createCourse(courseName, lsws, moduleId);
-  /*   await util.distributeLsws(moduleRes.data.module_id); */
   return courseRes;
 }
 

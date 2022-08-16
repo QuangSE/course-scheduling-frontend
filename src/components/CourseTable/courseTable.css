@@ -1,9 +1,3 @@
-/* 
-.test {
-  display: block;
-  border: 'none';
-} */
-
 .tree-toggler {
   display: inline-block;
   width: 0;
@@ -41,11 +35,6 @@
 
 .hybdrid-view-container {
   margin: auto;
-}
-
-thead {
-  background-color: #008f7a;
-  color: #ffffff;
 }
 
 .master-table {

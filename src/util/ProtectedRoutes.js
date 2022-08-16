@@ -11,13 +11,15 @@ function ProtectedRoutes() {
       .getSession()
       .then((res) => {
         console.log('session: ' + res.data.session);
-        setIsLoading(false);
         if (!res.data.session) {
           navigate('/login');
+        } else {
+          setIsLoading(false);
+          console.info('authorized');
         }
       })
       .catch((err) => {
-        console.warn(err.message);
+        console.error(err.message);
       });
   }, [isLoading]);
 

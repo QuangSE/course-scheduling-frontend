@@ -127,7 +127,6 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   }
 
   async function deleteEmptyExamRegulations() {
-    /*  const examRegulationsGroup = examRegGroup.exam_regulations_group; */ //TODO: check shared exam regulations
     if (await examRegHasErGroups()) {
       return;
     }
@@ -147,8 +146,6 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
           await api.deleteErGroup(erGroupId);
           await deleteEmptyExamRegulations();
         }
-      } else {
-        /*   await util.distributeLsws(moduleId); */
       }
     } catch (err) {
       //courses might have already been deleted by others admins
@@ -352,7 +349,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
 
   return (
     <div className="hybdrid-table-container">
-      <div className="first-item" onClick={(e) => setTableVisibility(!tableVisibility)}>
+      <div className="first-item" onClick={() => setTableVisibility(!tableVisibility)}>
         <div className="heading-container">
           <div className={`tree-toggler ${tableVisibility ? 'active' : null}`}></div>
           <h2 className={`major-header ${tableVisibility ? 'active' : null}`}>

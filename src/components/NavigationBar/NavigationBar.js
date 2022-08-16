@@ -23,7 +23,7 @@ function Header({ permissionId = -1, session = true }) {
             </div>
           </Fragment>
         ) : (
-          <h1 style={{ margin: 'auto' }}>Veranstaltungsmanagement HS-KL</h1>
+          <h2 style={{ margin: 'auto' }}>Veranstaltungsmanagement</h2>
         )}
       </div>
     </nav>

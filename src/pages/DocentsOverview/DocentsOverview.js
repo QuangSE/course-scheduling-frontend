@@ -7,16 +7,46 @@ function DocentsOverview() {
   const [docentsData, setDocentsData] = useState();
   const [session, setSession] = useState();
 
+  console.info('hello world');
   useEffect(() => {
     const fetchDocentData = async () => {
       const res = await api.getDocentCourseOverview();
       const sessionRes = await api.getSession();
-      setDocentsData(res.data);
+      const sortedData = sortDocentsByType(res.data);
+      setDocentsData(sortedData);
       setSession(sessionRes.data.user);
-      console.info(docentsData);
     };
     fetchDocentData();
   }, []);
+
+  function sortDocentsByType(data) {
+    let sortedData = [];
+    let c = { p: 0, vp: 0, lk: 0, lb: 0, empty: 0 };
+
+    for (let i = 0; i < data.length; i++) {
+      switch (data[i].jobType) {
+        case 'Professor':
+          sortedData.splice(c.p, 0, data[i]);
+          ++c.p;
+          break;
+        case 'Vertretungsprofessor':
+          sortedData.splice(c.p + c.vp, 0, data[i]);
+          ++c.vp;
+          break;
+        case 'Lehrkraft':
+          sortedData.splice(c.p + c.vp + c.lk, 0, data[i]);
+          ++c.lk;
+          break;
+        case 'Lehrbeauftragter':
+          sortedData.splice(c.p + c.vp + c.lk + c.lb, 0, data[i]);
+          ++c.lb;
+          break;
+        default:
+          sortedData.push(data[i]);
+      }
+    }
+    return sortedData;
+  }
 
   return (
     <Fragment>

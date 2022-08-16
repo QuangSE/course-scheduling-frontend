@@ -17,6 +17,7 @@ function App() {
             <Route path="/experimental" element={<Import />} />
           </Route>
           <Route path="/login" element={<Login />} />
+          <Route path="/*" element={<p>Error 404: Die Seite existiert nicht</p>} />
         </Routes>
       </BrowserRouter>
     </div>
