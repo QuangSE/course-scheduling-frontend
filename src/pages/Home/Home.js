@@ -23,15 +23,20 @@ export default function Home() {
   useEffect(() => {
     const fetchApiData = async () => {
       const sessionRes = await api.getSession();
+      const user = sessionRes.data.user;
       const overviewRes = await api.getAllExamRegulationsOverview();
       const docentListRes = await api.getMinimalDocentList();
       const compulsoryModulesRes = await api.getCompulsoryModuleOverview();
-      const tableData = await processData(overviewRes.data, compulsoryModulesRes.data);
+      const tableData = await processData(
+        overviewRes.data,
+        compulsoryModulesRes.data,
+        user.docent_id
+      );
       const myTotalLswsRes = await api.getMyTotalLsws();
 
       setApiData({
-        user: sessionRes.data.user,
-        tableData: tableData,
+        user,
+        tableData,
         docentList: docentListRes.data,
         myTotalLsws: myTotalLswsRes.data.totalLsws,
       });
@@ -39,13 +44,14 @@ export default function Home() {
     fetchApiData();
   }, [fetchData]);
 
-  function processData(data, compulsoryModules) {
+  function processData(data, compulsoryModules, docentId) {
     let processedData = [
       {
         isCompulsoryModules: true,
         modules: compulsoryModules,
         numberOfVisibleCourses: 0,
         numberOfRegisteredCourses: 0,
+        myRegisteredCourses: 0,
       },
     ];
 
@@ -57,7 +63,7 @@ export default function Home() {
       if (!isSameExamRegulationsGroup(processedData, data[i])) {
         pushElement(processedData, data[i]);
         const index = processedData.length - 1;
-        aggregateModulesOfErGroups(processedData, index, data[i]);
+        aggregateModulesOfErGroups(processedData, index, data[i], docentId);
       }
     }
     console.log('processed Data');
@@ -66,7 +72,7 @@ export default function Home() {
     return processedData;
   }
 
-  function aggregateModulesOfErGroups(processedData, index, examRegulations) {
+  function aggregateModulesOfErGroups(processedData, index, examRegulations, docentId) {
     let onlyOneGroup = true;
     for (const erGroups of examRegulations.erGroups) {
       for (const module of erGroups.modules) {
@@ -74,22 +80,30 @@ export default function Home() {
         module.er_group_name = erGroups.name;
         if (erGroups.name !== 'main') onlyOneGroup = false;
 
-        setRegisteredCourseCounter(processedData[index], module);
+        setRegisteredCourseCounter(processedData[index], module, docentId);
         processedData[index].modules.push(module);
       }
     }
     processedData[index].onlyOneGroup = onlyOneGroup;
   }
 
-  function setRegisteredCourseCounter(examRegGroup, module) {
+  function setRegisteredCourseCounter(examRegGroup, module, docentId) {
     if (util.isVisible(module) && module.courses.length !== 0) {
       for (const course of module.courses) {
+        deleteDeprecatedDocentCourseData(course);
         examRegGroup.numberOfVisibleCourses += 1;
         if (course.docentCourses.length !== 0 && course.docentCourses[0].registered === 1) {
           examRegGroup.numberOfRegisteredCourses += 1;
+          if (course.docentCourses[0].updated_by === docentId) {
+            examRegGroup.myRegisteredCourses += 1;
+          }
         }
       }
     }
+  }
+
+  function deleteDeprecatedDocentCourseData(course) {
+    //TODO: remove docentCourse if the value of  updated_at is older than one and a half year
   }
 
   function pushElement(processedData, examRegulations) {
@@ -101,6 +115,7 @@ export default function Home() {
       modules: [],
       numberOfVisibleCourses: 0,
       numberOfRegisteredCourses: 0,
+      myRegisteredCourses: 0,
       isCompulsoryModules: false,
       onlyOneGroup: true,
     });
@@ -161,7 +176,6 @@ export default function Home() {
       if (docentCourse.registered === 1) {
         await api.updateDocentCourse(docentCourse.docent_course_id, {
           registered: 0,
-          updated_by: docentCourse.updated_by,
         });
         ++resetCounter;
       }

@@ -333,37 +333,31 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   };
 
   const registeredCourseCounter = () => {
-    let visibleCourses = examRegGroup.numberOfVisibleCourses;
-    let registeredCourses = examRegGroup.numberOfRegisteredCourses;
-    /*  if (isAdmin()) { */
-    const color = registeredCourses === 0 ? 'grey' : 'black';
-    if (visibleCourses > 0 && visibleCourses === registeredCourses) {
-      return (
-        <>
-          <div style={{ color: 'green', paddingLeft: '30px' }}>
-            {registeredCourses}/{visibleCourses}
-            <div className="check-mark">L</div>
-          </div>
-        </>
-      );
-    } else {
-      return (
-        <div style={{ color: color, paddingLeft: '30px' }}>
-          {registeredCourses}/{visibleCourses}
-        </div>
-      );
-    }
-    /*    } */
+    const visibleCourses = examRegGroup.numberOfVisibleCourses;
+    const registeredCourses = examRegGroup.numberOfRegisteredCourses;
+    const myRegisteredCourses = examRegGroup.myRegisteredCourses;
 
-    /*     return (
-      <>
-        {isAdmin() ? (
-          <div style={{ color: 'black', paddingLeft: '30px' }}>
+    if (isAdmin()) {
+      const color = registeredCourses === 0 ? 'grey' : 'black';
+      if (visibleCourses > 0 && visibleCourses === registeredCourses) {
+        return (
+          <>
+            <div style={{ color: 'green', paddingLeft: '30px' }}>
+              {registeredCourses}/{visibleCourses}
+              <div className="check-mark">L</div>
+            </div>
+          </>
+        );
+      } else {
+        return (
+          <div style={{ color: color, paddingLeft: '30px' }}>
             {registeredCourses}/{visibleCourses}
           </div>
-        ) : null}
-      </>
-    ); */
+        );
+      }
+    } else if (myRegisteredCourses !== 0) {
+      return <div style={{ color: 'green', paddingLeft: '30px' }}>({myRegisteredCourses})</div>;
+    }
   };
 
   return (
