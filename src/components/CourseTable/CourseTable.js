@@ -338,7 +338,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
     const myRegisteredCourses = examRegGroup.myRegisteredCourses;
 
     if (isAdmin()) {
-      const color = registeredCourses === 0 ? 'grey' : 'black';
+      const color = registeredCourses === 0 ? 'grey' : myRegisteredCourses > 0 ? 'green' : 'black';
       if (visibleCourses > 0 && visibleCourses === registeredCourses) {
         return (
           <>
@@ -355,7 +355,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
           </div>
         );
       }
-    } else if (myRegisteredCourses !== 0) {
+    } else if (myRegisteredCourses > 0) {
       return <div style={{ color: 'green', paddingLeft: '30px' }}>({myRegisteredCourses})</div>;
     }
   };
