@@ -335,8 +335,27 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   const registeredCourseCounter = () => {
     let visibleCourses = examRegGroup.numberOfVisibleCourses;
     let registeredCourses = examRegGroup.numberOfRegisteredCourses;
+    /*  if (isAdmin()) { */
+    const color = registeredCourses === 0 ? 'grey' : 'black';
+    if (visibleCourses > 0 && visibleCourses === registeredCourses) {
+      return (
+        <>
+          <div style={{ color: 'green', paddingLeft: '30px' }}>
+            {registeredCourses}/{visibleCourses}
+            <div className="check-mark">L</div>
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <div style={{ color: color, paddingLeft: '30px' }}>
+          {registeredCourses}/{visibleCourses}
+        </div>
+      );
+    }
+    /*    } */
 
-    return (
+    /*     return (
       <>
         {isAdmin() ? (
           <div style={{ color: 'black', paddingLeft: '30px' }}>
@@ -344,7 +363,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
           </div>
         ) : null}
       </>
-    );
+    ); */
   };
 
   return (

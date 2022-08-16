@@ -62,3 +62,11 @@ p {
 td:last-child {
   border: none;
 }
+
+.check-mark {
+  margin-left: 20px;
+  display: inline-flex;
+  font-family: arial;
+  color: green;
+  transform: scaleX(-1) rotate(-35deg);
+}
