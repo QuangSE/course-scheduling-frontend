@@ -6,13 +6,13 @@ import EditableCell from '../EditableCell/EditableCell';
 import NestledRow from '../NestledTable/NestledRow';
 import { v4 as uuidv4 } from 'uuid';
 
-import './courseTable.css';
+import './majorOverview.css';
 
-function HybridView({ apiData, rerenderPage, isAdmin }) {
+function MajorOverview({ apiData, rerenderPage, isAdmin }) {
   return (
-    <div className="hybdrid-view-container">
+    <div className="overview-container">
       {apiData.tableData.map((element, index) => (
-        <HybridTable
+        <CourseTable
           examRegGroup={element}
           user={apiData.user}
           docentList={apiData.docentList}
@@ -27,7 +27,7 @@ function HybridView({ apiData, rerenderPage, isAdmin }) {
   );
 }
 
-function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
+function CourseTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
   //use to track which row (docent cell) to edit
   const [editCell, setEditCell] = useState({ courseId: -1 });
   const [tableVisibility, setTableVisibility] = useState(false);
@@ -338,7 +338,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
     const myRegisteredCourses = examRegGroup.myRegisteredCourses;
 
     if (isAdmin()) {
-      const color = registeredCourses === 0 ? 'grey' : myRegisteredCourses > 0 ? 'green' : 'black';
+      const color = registeredCourses === 0 ? 'grey' : 'black';
       if (visibleCourses > 0 && visibleCourses === registeredCourses) {
         return (
           <>
@@ -355,8 +355,24 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
           </div>
         );
       }
-    } else if (myRegisteredCourses > 0) {
-      return <div style={{ color: 'green', paddingLeft: '30px' }}>({myRegisteredCourses})</div>;
+    }
+    /* else if (myRegisteredCourses > 0) {
+      return (
+        <div style={{ color: 'green', paddingLeft: '30px', paddingRight: '10px' }}>
+          ({myRegisteredCourses})
+        </div>
+      );
+    } */
+  };
+
+  const myRegisteredCourses = () => {
+    const myRegisteredCourses = examRegGroup.myRegisteredCourses;
+    if (myRegisteredCourses > 0) {
+      return (
+        <div style={{ color: 'green', paddingLeft: '30px', paddingRight: '10px' }}>
+          ({myRegisteredCourses})
+        </div>
+      );
     }
   };
 
@@ -367,6 +383,7 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
           <div className={`tree-toggler ${tableVisibility ? 'active' : null}`}></div>
           <h2 className={`major-header ${tableVisibility ? 'active' : null}`}>
             {getMajorHeading()}
+            {myRegisteredCourses()}
             {registeredCourseCounter()}
           </h2>
         </div>
@@ -415,4 +432,4 @@ function HybridTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   );
 }
 
-export default HybridView;
+export default MajorOverview;

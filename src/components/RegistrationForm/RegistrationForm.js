@@ -48,7 +48,7 @@ function RegistrationForm({ login, setRegister }) {
     } catch (err) {
       console.info(JSON.stringify(err, undefined, 2));
       if (err.response && err.response.data.name === 'UniqueViolationError') {
-        setError(`Der Benutzername '${username}' existiert bereits`);
+        setError(`Der Benutzername existiert bereits`);
       } else {
         setError('Unbekannter Fehler');
         console.error(err);
@@ -85,7 +85,7 @@ function RegistrationForm({ login, setRegister }) {
         <h3>Registrierung</h3>
         <form onSubmit={handleFormSubmit}>
           <input
-            /*    style={{ width: '200px' }} */
+            className="reg-input-container"
             autoFocus={true}
             type="text"
             name="username"
@@ -95,7 +95,7 @@ function RegistrationForm({ login, setRegister }) {
             value={registrationFormData.username}
           />
           <input
-            /*     style={{ width: '100px' }} */
+            className="reg-input-container"
             type="password"
             name="password"
             required="required"
@@ -105,7 +105,7 @@ function RegistrationForm({ login, setRegister }) {
             value={registrationFormData.password}
           />
           <input
-            /*     style={{ width: '100px' }} */
+            className="reg-input-container"
             type="password"
             name="confirmPassword"
             required="required"
@@ -115,7 +115,7 @@ function RegistrationForm({ login, setRegister }) {
             value={registrationFormData.confirmPassword}
           />
           <input
-            /*     style={{}} */
+            className="reg-input-container"
             type="text"
             name="lastName"
             required="required"
@@ -124,6 +124,7 @@ function RegistrationForm({ login, setRegister }) {
             value={registrationFormData.lastName}
           />
           <input
+            className="reg-input-container"
             style={{}}
             type="text"
             name="firstName"

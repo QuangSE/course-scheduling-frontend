@@ -3,8 +3,9 @@ import NavBar from '../../components/NavigationBar/NavigationBar';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import util from '../../util/utilFunctions';
 import './home.css';
-import HybridView from '../../components/CourseTable/CourseTable.js';
+import MajorOverview from '../../components/MajorOverview/MajorOverview.js';
 import MajorForm from '../../components/MajorForm/MajorForm';
+import CsvExportButton from '../../components/CsvExport/CsvExport';
 
 export default function Home() {
   const [apiData, setApiData] = useState();
@@ -184,7 +185,7 @@ export default function Home() {
     rerenderPage();
   }
 
-  function typeAbbreviation(type) {
+  /*   function typeAbbreviation(type) {
     switch (type) {
       case 'Professor':
         return 'P';
@@ -315,7 +316,7 @@ export default function Home() {
       document.body.appendChild(element);
       element.click();
     }
-  }
+  } */
 
   const resetEntriesButton = () => {
     return (
@@ -347,13 +348,13 @@ export default function Home() {
     ) : null;
   };
 
-  const csvExportButton = () => {
+  /*   const csvExportButton = () => {
     return (
       <button className="entry-button" type="button" onClick={exportToCsv}>
         CSV-Export
       </button>
     );
-  };
+  }; */
 
   return (
     <Fragment>
@@ -369,7 +370,7 @@ export default function Home() {
                     {resetEntriesButton()}
                     {resetEntriesMsg()}
                   </div>
-                  <div>{csvExportButton()}</div>
+                  <CsvExportButton tableData={apiData.tableData} />
                 </Fragment>
               ) : null}
             </div>
@@ -377,7 +378,7 @@ export default function Home() {
             {adaptEntriesMsg()}
           </div>
           <div className="content-center">
-            <HybridView apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
+            <MajorOverview apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
           </div>
           <div className="content-center"></div>
           <MajorForm isAdmin={isAdmin} rerenderPage={rerenderPage} />
