@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import {
   API_BASE_URL,
+  HTTP_URL,
   AUTHENTICATION,
   EXAM_REGULATIONS,
   MAJOR,
