@@ -44,7 +44,7 @@ function LoginForm({ login, setRegister, error }) {
         </div>
         <div className="btn-container">
           <input type="submit" value="Login" />
-          <input type="button" value="Registrieren" onClick={onRegisterClick} />
+          <input type="button" value="Registrierung" onClick={onRegisterClick} />
           <div style={{ color: 'red', paddingTop: '10px' }}>
             {error ? 'Anmeldedaten sind ungültig' : null}
           </div>

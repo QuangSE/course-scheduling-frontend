@@ -14,11 +14,13 @@ function Header({ permissionId = -1, session = true }) {
               <li key={1}>
                 <Link to="/">Startseite</Link>
               </li>
-              <li key={2}>
-                {permissionId === 1 ? <Link to="/docents-overview">Dozentenübersicht</Link> : null}
-              </li>
+              {permissionId === 1 ? (
+                <li key={2}>
+                  <Link to="/docents-overview">Dozentenübersicht</Link>
+                </li>
+              ) : null}
             </ul>
-            <div className="button">
+            <div>
               <Logout />
             </div>
           </Fragment>

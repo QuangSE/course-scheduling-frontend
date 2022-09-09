@@ -1,5 +1,3 @@
 {
-    "recommendations": [
-        "Gruntfuggly.todo-tree"
-    ]
+  "recommendations": ["gruntfuggly.todo-tree", "liamhammett.inline-parameters"]
 }

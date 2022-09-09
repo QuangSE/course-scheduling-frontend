@@ -16,6 +16,7 @@ nav {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  text-align: center;
   align-items: center;
 }
 
@@ -25,6 +26,8 @@ li {
   font-size: 22px;
   padding-right: 20px;
   line-height: 25px;
+  text-align: center;
+  margin: auto;
 }
 Link {
   text-decoration: none;

@@ -1,5 +1,5 @@
 module.exports = {
-  API_BASE_URL: 'https://localhost:3001/api/',
+  API_BASE_URL: 'https://localhost:3001/api-v1.0/',
   HTTP_URL: 'http://localhost:3002/api',
   AUTHENTICATION: 'auth',
   EXAM_REGULATIONS: 'exam-regulations',

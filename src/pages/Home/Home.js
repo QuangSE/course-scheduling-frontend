@@ -3,7 +3,7 @@ import NavBar from '../../components/NavigationBar/NavigationBar';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import util from '../../util/utilFunctions';
 import './home.css';
-import MajorOverview from '../../components/MajorOverview/MajorOverview.js';
+import MajorsOverview from '../../components/MajorsOverview/MajorsOverview.js';
 import MajorForm from '../../components/MajorForm/MajorForm';
 import CsvExportButton from '../../components/CsvExport/CsvExport';
 
@@ -20,6 +20,8 @@ export default function Home() {
   function isAdmin() {
     return apiData.user.permission_id === 1;
   }
+
+  console.info('RENDERING PAGE');
 
   useEffect(() => {
     const fetchApiData = async () => {
@@ -45,20 +47,22 @@ export default function Home() {
     fetchApiData();
   }, [fetchData]);
 
-  function processData(data, compulsoryModules, docentId) {
-    let processedData = [
-      {
-        isCompulsoryModules: true,
-        modules: compulsoryModules,
-        numberOfVisibleCourses: 0,
-        numberOfRegisteredCourses: 0,
-        myRegisteredCourses: 0,
-      },
-    ];
-
-    for (const module of processedData[0].modules) {
-      setRegisteredCourseCounter(processedData[0], module);
+  function setCompulsoryModules(compulsoryModules) {
+    let data = {
+      isCompulsoryModules: true,
+      modules: compulsoryModules,
+      numberOfVisibleCourses: 0,
+      numberOfRegisteredCourses: 0,
+      myRegisteredCourses: 0,
+    };
+    for (const module of data.modules) {
+      setRegisteredCourseCounter(data, module);
     }
+    return data;
+  }
+
+  function processData(data, compulsoryModules, docentId) {
+    let processedData = [];
 
     for (const i in data) {
       if (!isSameExamRegulationsGroup(processedData, data[i])) {
@@ -68,9 +72,17 @@ export default function Home() {
       }
     }
     console.log('processed Data');
+    sortByDegree(processedData);
+    processedData.splice(0, 0, setCompulsoryModules(compulsoryModules));
     sortModulesBySemester(processedData);
     console.log(processedData);
     return processedData;
+  }
+
+  function sortByDegree(data) {
+    data.sort((a, b) =>
+      a.major.degree < b.major.degree ? -1 : a.major.degree > b.major.degree ? 1 : 0
+    );
   }
 
   function aggregateModulesOfErGroups(processedData, index, examRegulations, docentId) {
@@ -185,139 +197,6 @@ export default function Home() {
     rerenderPage();
   }
 
-  /*   function typeAbbreviation(type) {
-    switch (type) {
-      case 'Professor':
-        return 'P';
-        break;
-      case 'Lehrkraft':
-        return 'LK';
-        break;
-      case 'Lehrbeauftragter':
-        return 'LB';
-        break;
-      case 'Vertretungsprofessor':
-        return 'VP';
-        break;
-      default:
-        return '';
-    }
-  }
-
-  function convertToCsv(examReg) {
-    let csv = '';
-    if (examReg.isCompulsoryModules) {
-    } else {
-      csv = `${examReg.major.degree} ${examReg.major.name} ${
-        examReg.exam_regulations_group ? examReg.exam_regulations_group : examReg.year
-      };;;;;;;\n`;
-      csv += 'Veranstaltungsmanagement;;;;;;;\n';
-      csv += 'Sem.;Gruppe;Modul;Lehrveranstaltung;ModulSWS;Dozent;Art;LSWS' + '\n';
-      for (const module of examReg.modules) {
-        const groupName = module.er_group_name === 'main' ? '' : module.er_group_name;
-        const courses = module.courses;
-        if (courses.length !== 0) {
-          for (let i = 0; i < courses.length; i++) {
-            let docent = '---';
-            let docentName = '---';
-            let type = '---';
-            if (courses[i].docentCourse && courses[i].docentCourse.registered === 1) {
-              docent = courses[i].docentCourse.docent;
-              docentName = docent.name;
-              type = typeAbbreviation(docent.job_type);
-            }
-            csv += `${module.semester};${groupName};${module.name};${courses[i].name};${module.sws};${docentName};${type};${courses[i].lsws}\n`;
-          }
-        } else {
-          csv += `${module.semester};${groupName};${module.name};---;---;---;---;---\n`;
-        }
-      }
-    }
-    return csv;
-  }
-
-  function majorAbbreviation(name) {
-    switch (name) {
-      case 'Finanzdienstleistungen':
-        return 'Fidi';
-        break;
-      case 'Wirtschaftsinformatik':
-        return 'Winfo';
-        break;
-      case 'Mittelstandsökonomie':
-        return 'Mö';
-        break;
-      case 'Technische Betriebswirtschaftslehre':
-        return 'TBW';
-        break;
-      case 'Industrial and Digital Management':
-        return 'IDM';
-        break;
-      case 'International Business Administration':
-        return 'IBA';
-        break;
-      case 'Wirtschaft und Recht':
-        return 'WuR';
-        break;
-      case 'Information Management':
-        return 'IM';
-        break;
-      case 'Mittelstandsmanagement':
-        return 'MM';
-        break;
-      case 'Financial Services Management':
-        return 'FSM';
-        break;
-      case 'International Management and Finance':
-        return 'IMF';
-        break;
-      case 'Mittelstandsmanagement':
-        return 'MM';
-        break;
-      case 'Wirtschaftsingenieurwesen - Logistik & Produktionsmanagement':
-        return 'WLP';
-        break;
-      default:
-        return name;
-    }
-  }
-
-  function degreeAbbreviations(degree) {
-    if (degree === 'Bachelor') {
-      return 'BA';
-    }
-    if (degree === 'Master') {
-      return 'MA';
-    }
-    return degree;
-  }
-
-  function getFileName(examReg) {
-    if (examReg.isCompulsoryModules) {
-      return `BA_allg_WahlPflichtM_2020`;
-    }
-    const major = examReg.major;
-    const examRegulations = examReg.exam_regulations_group
-      ? `PO${examReg.exam_regulations_group}`
-      : `PO${examReg.year}`;
-    return `${degreeAbbreviations(major.degree)}_${majorAbbreviation(
-      major.name
-    )}_${examRegulations}`;
-  }
-
-  async function exportToCsv(event) {
-    const universalBOM = '\uFEFF';
-    event.preventDefault();
-    for (const examReg of apiData.tableData) {
-      const csv = await convertToCsv(examReg);
-      const element = document.createElement('a');
-      element.href = 'data:text/csv;charset=utf-8,' + encodeURI(universalBOM + csv);
-      element.download = `${getFileName(examReg)}.csv`;
-      document.body.appendChild(element);
-      element.click();
-    }
-  } */
-
   const resetEntriesButton = () => {
     return (
       <button className="entry-button reset-entries" type="button" onClick={resetEntries}>
@@ -348,14 +227,6 @@ export default function Home() {
     ) : null;
   };
 
-  /*   const csvExportButton = () => {
-    return (
-      <button className="entry-button" type="button" onClick={exportToCsv}>
-        CSV-Export
-      </button>
-    );
-  }; */
-
   return (
     <Fragment>
       {apiData ? (
@@ -378,7 +249,7 @@ export default function Home() {
             {adaptEntriesMsg()}
           </div>
           <div className="content-center">
-            <MajorOverview apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
+            <MajorsOverview apiData={apiData} rerenderPage={rerenderPage} isAdmin={isAdmin} />
           </div>
           <div className="content-center"></div>
           <MajorForm isAdmin={isAdmin} rerenderPage={rerenderPage} />

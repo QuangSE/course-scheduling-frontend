@@ -43,6 +43,10 @@ class CourseSchedulingApi {
     return this.api.post(`${AUTHENTICATION}/delete-session`, { logout: true });
   }
 
+  getRegCode() {
+    return this.api.get(`${AUTHENTICATION}/registration-code`);
+  }
+
   createMajor(name, degree) {
     return this.api.post(MAJOR, { name, degree });
   }

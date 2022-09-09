@@ -21,7 +21,6 @@ function LoginPage() {
   useEffect(() => {
     const checkAuthentication = async () => {
       const res = await api.getSession();
-      console.log('session: ' + res.data.session);
       if (res.data.session) {
         navigate('/');
       }

@@ -5,6 +5,7 @@ import api from '../apis/courseScheduling/CourseSchedulingApi';
 function ProtectedRoutes() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState();
 
   useEffect(() => {
     api
@@ -20,10 +21,12 @@ function ProtectedRoutes() {
       })
       .catch((err) => {
         console.error(err.message);
+        if (err.message && err.message === 'Network Error')
+          setError(<p>Network Error: Cannot connect to Backend Server</p>);
       });
   }, [isLoading]);
 
-  return isLoading ? null : <Outlet />;
+  return error ? error : isLoading ? null : <Outlet />;
 }
 
 export default ProtectedRoutes;

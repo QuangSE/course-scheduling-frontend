@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import './logout.css';
@@ -14,21 +14,13 @@ function Logout() {
       console.log(JSON.stringify(err.response.data));
     }
   };
-  const logout = () => {
-    try {
-      api.deleteSession();
-    } catch (err) {
-      console.log(JSON.stringify(err.response.data));
-    }
-    api
-      .post('/auth/logout', { logout: true })
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+
+  //<a href="https://www.flaticon.com/free-icons/logout" title="logout icons">Logout icons created by Afian Rochmah Afif - Flaticon</a>
+  return (
+    <div className="img-hover-zoom">
+      <img src={require('../../images/logout.png')} onClick={onLogout} />
+    </div>
+  );
   return <button onClick={onLogout}>Logout</button>;
 }
 

@@ -6,13 +6,13 @@ import EditableCell from '../EditableCell/EditableCell';
 import NestledRow from '../NestledTable/NestledRow';
 import { v4 as uuidv4 } from 'uuid';
 
-import './majorOverview.css';
+import './majorsOverview.css';
 
-function MajorOverview({ apiData, rerenderPage, isAdmin }) {
+function MajorsOverview({ apiData, rerenderPage, isAdmin }) {
   return (
     <div className="overview-container">
       {apiData.tableData.map((element, index) => (
-        <CourseTable
+        <SchedulingTable
           examRegGroup={element}
           user={apiData.user}
           docentList={apiData.docentList}
@@ -27,7 +27,7 @@ function MajorOverview({ apiData, rerenderPage, isAdmin }) {
   );
 }
 
-function CourseTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
+function SchedulingTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) {
   //use to track which row (docent cell) to edit
   const [editCell, setEditCell] = useState({ courseId: -1 });
   const [tableVisibility, setTableVisibility] = useState(false);
@@ -432,4 +432,4 @@ function CourseTable({ examRegGroup, user, rerenderPage, docentList, isAdmin }) 
   );
 }
 
-export default MajorOverview;
+export default MajorsOverview;

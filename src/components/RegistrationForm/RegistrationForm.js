@@ -1,6 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import api from '../../apis/courseScheduling/CourseSchedulingApi';
 import './registrationForm.css';
+/* const dotenv = require('dotenv').config(); */
 
 function RegistrationForm({ login, setRegister }) {
   const emptyFormData = {
@@ -9,6 +10,7 @@ function RegistrationForm({ login, setRegister }) {
     confirmPassword: '',
     lastName: '',
     firstName: '',
+    code: '',
   };
   const [registrationFormData, setRegistrationFormData] = useState(emptyFormData);
   const [error, setError] = useState(null);
@@ -24,6 +26,13 @@ function RegistrationForm({ login, setRegister }) {
 
   async function handleFormSubmit(event) {
     event.preventDefault();
+    const res = await api.getRegCode();
+    const regCode = res.data.registrationCode;
+
+    if (registrationFormData.code !== regCode) {
+      setError('Der Registrierungscode ist ungültig');
+      return;
+    }
 
     const username = registrationFormData.username.trim();
     const password = registrationFormData.password;
@@ -131,6 +140,15 @@ function RegistrationForm({ login, setRegister }) {
             placeholder="Vorname"
             onChange={handleFormChange}
             value={registrationFormData.firstName}
+          />
+          <input
+            style={{ marginTop: 20, marginBottom: 10 }}
+            type="text"
+            name="code"
+            required="required"
+            placeholder="Registrierungscode"
+            onChange={handleFormChange}
+            value={registrationFormData.code}
           />
           <button type="submit">Account erstellen</button>
         </form>
